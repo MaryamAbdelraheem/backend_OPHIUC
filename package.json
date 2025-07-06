@@ -1,0 +1,30 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "Backend_Server",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-async-handler": "^1.2.0",
+    "express-validator": "^7.2.1",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.14.0",
+    "sequelize": "^6.37.6",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "eslint": "^9.22.0",
+    "nodemon": "^3.1.10"
+  }
+}
