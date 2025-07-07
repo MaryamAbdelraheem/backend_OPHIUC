@@ -3,12 +3,13 @@ exports.notFoundHandler = (req, res, next) => {
     next(error);
 };
 
-/*exports.errorHandler = (err, req, res, next) => {
+exports.errorHandler = (err, req, res, next) => {
     const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
     res.status(statusCode).json({ message: err.message })
-};*/
+};
 
-exports.errorHandler = (err, req, res, next) => {
+
+/*exports.errorHandler = (err, req, res, next) => {
     const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
 
     // ✅ أطبع الخطأ بشكل كامل في الترمينال
@@ -19,4 +20,4 @@ exports.errorHandler = (err, req, res, next) => {
         message: err.message,
         stack: err.stack, // ✅ عشان توصلك التفاصيل في Postman
     });
-};
+};*/
