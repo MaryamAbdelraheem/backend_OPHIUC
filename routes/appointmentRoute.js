@@ -20,7 +20,6 @@ router
     )
     .get(
         authenticateToken,
-        authorizeRole('patient'),
         getAllAppointmentsWithDoctorInfo
     )
 module.exports = router;

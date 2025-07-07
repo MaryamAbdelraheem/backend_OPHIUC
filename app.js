@@ -45,8 +45,8 @@ const server = http.createServer(app);
 const initSocket = require("./socket");
 
 // Error handler and handler not found
-/*app.use(notFoundHandler);
-app.use(errorHandler);*/
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 
 sequelize.sync({ force: false})

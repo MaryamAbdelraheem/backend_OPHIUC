@@ -6,25 +6,25 @@ Doctor.hasMany(Patient);
 Patient.belongsTo(Doctor);
 
 // 1 To M Patient => Appointment
-Patient.hasMany(Appointment);
-Appointment.belongsTo(Patient);
+Patient.hasMany(Appointment, { foreignKey: 'patientId' });
+Appointment.belongsTo(Patient, { foreignKey: 'patientId' });
 
 // 1 To M Doctor => Appointment
-Doctor.hasMany(Appointment);
-Appointment.belongsTo(Doctor);
+Doctor.hasMany(Appointment, { foreignKey: 'doctorId' });
+Appointment.belongsTo(Doctor, { foreignKey: 'doctorId' });
+
 
 // 1 To M Patient => Notification
-Patient.hasMany(Notification);
-Notification.belongsTo(Patient);
+Notification.belongsTo(Patient, { foreignKey: 'patientId' });
+Patient.hasMany(Notification, { foreignKey: 'patientId' });
 
 // 1 To M Doctor => Notification
-Doctor.hasMany(Notification);
-Notification.belongsTo(Doctor);
+Notification.belongsTo(Doctor, { foreignKey: 'doctorId' });
+Doctor.hasMany(Notification, { foreignKey: 'doctorId' });
 
 // 1 To M Appointment => Notification
-Appointment.hasMany(Notification);
-Notification.belongsTo(Appointment);
-
+Notification.belongsTo(Appointment, { foreignKey: 'appointmentId' });
+Appointment.hasMany(Notification, { foreignKey: 'appointmentId' });
 //  Device belongs to Patient
 Patient.hasMany(Device);
 Device.belongsTo(Patient);

@@ -9,6 +9,14 @@ module.exports = (sequelize, DataTypes) => {
       appointment_date: {
         type: DataTypes.DATE,
         allowNull: false
+      },
+      doctorId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      patientId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
       }
     }, {
       timestamps: true
@@ -32,20 +40,20 @@ module.exports = (sequelize, DataTypes) => {
   //// After Update
 
   Appointment.afterCreate(async (appointment, options) => {
-    const NotificationService = require('../services/NotificationService');
+  const NotificationService = require('../services/NotificationService');
 
-    await NotificationService.send({
-      type: 'APPOINTMENT',
-      recipient_id: appointment.PatientPatientId,
-      context_type: 'APPOINTMENT',
-      context_id: appointment.appointment_id,
-      target_app: 'PATIENT_APP',                         // ✅ القيمة الصحيحة
-      delivery_method: 'IN_APP',                         // ✅ زي ما عملنا في signup
-      PatientPatientId: appointment.PatientPatientId,    // ✅ إضافة
-      DoctorDoctorId: appointment.DoctorDoctorId,        // ✅ إضافة
-      AppointmentAppointmentId: appointment.appointment_id // ✅ إضافة
-    });
+  await NotificationService.send({
+    type: 'APPOINTMENT',
+    recipient_id: appointment.patientId,
+    context_type: 'APPOINTMENT',
+    context_id: appointment.appointment_id,
+    target_app: 'PATIENT_APP',
+    delivery_method: 'IN_APP',
+    patientId: appointment.patientId,
+    doctorId: appointment.doctorId,
+    appointmentId: appointment.appointment_id
   });
+});
 
     return Appointment;
   };

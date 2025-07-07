@@ -14,8 +14,8 @@ exports.createAppointment = asyncHandler(async (req, res) => {
 
     // Create Appointment
     const appointment = await Appointment.create({
-        DoctorDoctorId: doctorId,
-        PatientPatientId: patient_id,
+        doctorId: doctorId,
+        patientId: patient_id,
         appointment_date,
     });
     res.status(201).json({
@@ -30,37 +30,55 @@ exports.createAppointment = asyncHandler(async (req, res) => {
 /**
  * @desc Get all appointments with doctor name, specialty, date and time
  * @route GET /api/appointments
- * @access Private (for authenticated users like doctors or admins)
+ * @access Private (for authenticated users like doctors or patients)
  */
 
 exports.getAllAppointmentsWithDoctorInfo = asyncHandler(async (req, res) => {
-    const patientId = req.user.id; // مفترض جاي من التوكن بعد فك الـ JWT
 
-    const appointments = await Appointment.findAll({
-        where: { PatientPatientId: patientId },
-        include: [
-            {
-                model: Doctor,
-                attributes: ['firstName', 'lastName', 'specialization']
-            }
-        ],
-        attributes: ['appointment_date'],
-        order: [['appointment_date', 'ASC']],
-    });
+        const { id, role } = req.user;
+        let appointments;
 
-
-
-    const formattedAppointments = appointments.map(app => ({
-        doctorName: `${app.Doctor.firstName} ${app.Doctor.lastName}`,
-        specialization: app.Doctor.specialization, // ✅ الآن سيظهر بشكل صحيح
-        date: app.appointment_date.toISOString().split('T')[0],
-        time: app.appointment_date.toISOString().split('T')[1].slice(0, 5),
-    }));
-
-    res.status(200).json({
-        status: "success",
-        data: {
-            appointments: formattedAppointments
+        if (role === 'doctor') {
+            appointments = await Appointment.findAll({
+                where: { doctorId: id },
+                include: [{ model: Patient, attributes: ['firstName', 'lastName', 'email'] }],
+                order: [['appointment_date', 'ASC']]
+            });
+        } else if (role === 'patient') {
+            appointments = await Appointment.findAll({
+                where: { patientId: id },
+                include: [{ model: Doctor, attributes: ['firstName', 'lastName', 'specialization'] }],
+                order: [['appointment_date', 'ASC']]
+            });
+        } else {
+            return res.status(403).json({ message: "Access denied." });
         }
-    });
+
+        const formattedAppointments = appointments.map(app => {
+            const date = app.appointment_date.toISOString().split('T')[0];
+            const time = app.appointment_date.toISOString().split('T')[1].slice(0, 5);
+
+            if (role === 'patient') {
+                return {
+                    doctorName: `${app.Doctor.firstName} ${app.Doctor.lastName}`,
+                    specialization: app.Doctor.specialization,
+                    date,
+                    time,
+                };
+            } else {
+                return {
+                    patientName: `${app.Patient.firstName} ${app.Patient.lastName}`,
+                    email: app.Patient.email,
+                    date,
+                    time,
+                };
+            }
+        });
+
+        res.status(200).json({
+            status: "success",
+            data: {
+                appointments: formattedAppointments
+            }
+        });
 });
