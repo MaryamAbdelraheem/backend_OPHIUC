@@ -1,4 +1,5 @@
 const { body } = require('express-validator');
+const { validateRequest } = require('../middleware/validateRequest');
 
 exports.appointmentValidationRules = () => [
     body('patient_id')
@@ -12,5 +13,6 @@ exports.appointmentValidationRules = () => [
     body('notes')
         .optional()
         .isString().withMessage('Notes must be text')
-        .isLength({ max: 1000 }).withMessage('Notes cannot exceed 1000 characters')
+        .isLength({ max: 1000 }).withMessage('Notes cannot exceed 1000 characters'),
+        validateRequest
 ];

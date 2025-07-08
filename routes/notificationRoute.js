@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const NotificationController = require('../controllers/NotificationController');
-const { authenticateToken } = require('../middleware/authMiddleware');
+const { authenticateToken, authorizeRoles } = require('../middleware/authMiddleware');
 
 //note:
 //لما الفلاتر يطلب 
@@ -55,6 +55,7 @@ router
     .route('/general')
     .post(
         authenticateToken,
+        authorizeRoles("patient", 'doctor'),
         NotificationController.sendGeneral
     );
 

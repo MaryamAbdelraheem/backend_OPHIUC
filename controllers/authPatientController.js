@@ -67,7 +67,7 @@ exports.signup = asyncHandler(async (req, res, next) => {
         weight,
         gender: genderString,
         age,
-        DoctorDoctorId: doctorId // <-- هنا نمرر doctorId في الحقل الصحيح بقاعدة البيانات
+        doctorId // <-- هنا نمرر doctorId في الحقل الصحيح بقاعدة البيانات
     });
 
     // await NotificationService.send({
@@ -87,9 +87,9 @@ exports.signup = asyncHandler(async (req, res, next) => {
         context_id: null,
         target_app: 'PATIENT_APP',
         delivery_method: 'IN_APP',
-        PatientPatientId: patient.patientId,   
-        DoctorDoctorId: doctorId || null,      
-        AppointmentAppointmentId: null         //  نقدر تحطها بقيمة حقيقية بعد كدا
+        patientId: patient.patientId,   
+        doctorId: doctorId || null,      
+        appointmentId: null         //  نقدر تحطها بقيمة حقيقية بعد كدا
     });
 
     // Generate token

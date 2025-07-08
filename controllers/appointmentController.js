@@ -52,7 +52,7 @@ exports.getAllAppointmentsWithDoctorInfo = asyncHandler(async (req, res) => {
             });
         } else {
             return res.status(403).json({ message: "Access denied." });
-        }
+        }////
 
         const formattedAppointments = appointments.map(app => {
             const date = app.appointment_date.toISOString().split('T')[0];

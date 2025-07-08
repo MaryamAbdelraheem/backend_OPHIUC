@@ -3,7 +3,7 @@ const router = express.Router();
 const patientController = require("../controllers/patientController");
 const { loginValidationRules } = require("../validators/authValidator");
 const {validateRequest} = require("../middleware/validateRequest");
-const { authenticateToken, authorizeRole } = require("../middleware/authMiddleware");
+const { authenticateToken, authorizeRoles } = require("../middleware/authMiddleware");
 const authPatientController = require('../controllers/authPatientController');
 
 // Public routes
@@ -38,7 +38,7 @@ router
     .route('/logout')
     .post(
         authenticateToken,
-        authorizeRole('patient'),
+        authorizeRoles('patient'),
         authPatientController.logout
     );
     
@@ -50,12 +50,12 @@ router
     .route('/:id')
     .get(
         authenticateToken,
-        authorizeRole('patient'),
+        authorizeRoles('patient'),
         patientController.getProfile
     )
     .put(
         authenticateToken,
-        authorizeRole('patient'),
+        authorizeRoles('patient'),
         patientController.updateProfile
     )
 

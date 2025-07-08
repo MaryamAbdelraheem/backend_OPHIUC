@@ -1,26 +1,32 @@
 function registerVitalsHandlers(socket, io) {
-  const sensorDataInterval = setInterval(() => {
-    const dummySensorData = {
-      temperature_mpu: parseFloat((Math.random() * 5 + 25).toFixed(2)),
-      temperature_body: parseFloat((Math.random() * 2 + 36).toFixed(2)),
-      bpm: Math.floor(Math.random() * 30 + 60),
-      ir: Math.floor(Math.random() * 10000) + 50000,
-      bp_est: parseFloat((Math.random() * 20 + 80).toFixed(1)),
-      accelerometer: {
-        x: parseFloat((Math.random() * 0.1 - 0.05).toFixed(4)),
-        y: parseFloat((Math.random() * 0.1 - 0.05).toFixed(4)),
-        z: parseFloat((Math.random() * 0.5 + 9.5).toFixed(4))
-      },
-      gyroscope: [
-        parseFloat((Math.random() * 0.01 - 0.005).toFixed(4)),
-        parseFloat((Math.random() * 0.01 - 0.005).toFixed(4)),
-        parseFloat((Math.random() * 0.01 - 0.005).toFixed(4))
-      ]
-    };
+
+  // 1.get device_id from client
+  // socket.on("register_device", ({ device_id }) => {
+  //   // save device_id and join its room
+  // });
+
+//////////////////////////////////////////////////////////////
+
+  // 2.access firebase data every 2 seconds
+  const sensorDataInterval = setInterval(async () => {
+
+    // 2.1.read sensor data from firebase
+    // const snapshot = await db.ref(`devices/${device_id}/sensors`).once("value");
+    // const sensorData = snapshot.val();
+
+    // 2.2.send data to AI endpoint
+    // const prediction = await axios.post("http://localhost:5000/api/ai/predict", sensorData);
+
+    // 2.3.emit result to doctor in the same device room
+    // io.to(device_id).emit("prediction_result", prediction.data);
 
     socket.emit("sensor_data", dummySensorData);
+
   }, 2000);
 
+//////////////////////////////////////////////////////////////
+
+  // 3.disconnect
   socket.on("disconnect", () => {
     clearInterval(sensorDataInterval);
   });

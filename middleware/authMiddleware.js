@@ -23,15 +23,15 @@ function authenticateToken(req, res, next) {
 
 
 // Role-based access control middleware
-function authorizeRole(role) {
+function authorizeRoles(...allowedRoles) {
   return (req, res, next) => {
     if (!req.user) {
       return res.status(401).json({ message: "Unauthorized: No user found" });
     }
 
-    if (req.user.role !== role) {
-      return res.status(403).json({ 
-        message: `Forbidden: Access denied. Required role: ${role}` 
+    if (!allowedRoles.includes(req.user.role)) {
+      return res.status(403).json({
+        message: `Forbidden: Access denied. Required role: ${allowedRoles.join(", ")}`
       });
     }
 
@@ -47,9 +47,9 @@ function generateToken(user, role) {
     role: role
   };
 
-  return jwt.sign(payload, SECRET_KEY, { expiresIn: "1h" });
+  return jwt.sign(payload, SECRET_KEY, { expiresIn: "12h" });
 }
 
 
 
-module.exports = { authenticateToken, generateToken, authorizeRole };
+module.exports = { authenticateToken, generateToken, authorizeRoles };

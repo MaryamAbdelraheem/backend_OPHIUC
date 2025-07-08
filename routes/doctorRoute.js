@@ -4,7 +4,7 @@ const doctorController = require('../controllers/doctorController');
 const authDoctorController = require('../controllers/authDoctorController');
 const { loginValidationRules } = require('../validators/authValidator');
 const { validateRequest } = require('../middleware/validateRequest');
-const { authenticateToken, authorizeRole } = require('../middleware/authMiddleware');
+const { authenticateToken, authorizeRoles } = require('../middleware/authMiddleware');
 
 // Public routes
 /**
@@ -29,7 +29,7 @@ router
     .route('/logout')
     .post(
         authenticateToken,
-        authorizeRole('doctor'),
+        authorizeRoles('doctor'),
         authDoctorController.logout
     )
 
@@ -41,7 +41,7 @@ router
     .route('/:id')
     .get(
         authenticateToken,
-        authorizeRole('doctor'),
+        authorizeRoles('doctor'),
         doctorController.getProfile
     )
 
@@ -53,7 +53,7 @@ router
     .route('/:id/patients')
     .get(
         authenticateToken,
-        authorizeRole('doctor'),
+        authorizeRoles('doctor'),
         doctorController.getPatients
     )
 
@@ -65,7 +65,7 @@ router
     .route('/:doctorId/patients/:patientId')
     .get(
         authenticateToken,
-        authorizeRole('doctor'),
+        authorizeRoles('doctor'),
         doctorController.getPatientProfile
     )
 

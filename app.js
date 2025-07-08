@@ -19,6 +19,7 @@ const patientRoutes = require('./routes/patientRoute');
 const appointmentRoutes = require('./routes/appointmentRoute');
 const notificationRoutes = require('./routes/notificationRoute'); 
 const vitalsRoutes = require('./routes/vitalsRoute'); 
+const aiRoutes = require("./routes/aiRoute");
 
 //console.log("JWT_SECRET:", process.env.JWT_SECRET);
 //console.log("JWT_EXPIRES_IN:", process.env.JWT_EXPIRES_IN);
@@ -39,7 +40,7 @@ app.use('/api/patient', patientRoutes);
 app.use('/api/appointment', appointmentRoutes);
 app.use('/api/notifications', notificationRoutes); 
 app.use('/api/vitals', vitalsRoutes); 
-
+app.use("/api/ai", aiRoutes);
 
 const server = http.createServer(app);
 const initSocket = require("./socket");

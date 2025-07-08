@@ -3,7 +3,7 @@ const router = express.Router();
 const adminController = require('../controllers/adminController');
 const { loginValidationRules } = require('../validators/authValidator');
 const { validateRequest } = require('../middleware/validateRequest');//POST /api/admin / login
-const { authenticateToken, generateToken, authorizeRole } = require("../middleware/authMiddleware");
+const { authenticateToken, generateToken, authorizeRoles } = require("../middleware/authMiddleware");
 
 /**
  * @route /api/admin/login
@@ -24,7 +24,7 @@ router
     .route("/dashboard")
     .get(
         authenticateToken,
-        authorizeRole('admin'),
+        authorizeRoles('admin'),
         (req, res) => {
             res.json({ message: "Welcome to the dashboard", user: req.user });
         }
@@ -38,12 +38,12 @@ router
     .route('/users/doctors')
     .get(
         authenticateToken,
-        authorizeRole('admin'),
+        authorizeRoles('admin'),
         adminController.viewDoctors
     )
     .post(
         authenticateToken,
-        authorizeRole('admin'),
+        authorizeRoles('admin'),
         adminController.addDoctor
     )
 
@@ -55,7 +55,7 @@ router
     .route('/users/doctors/:id')
     .delete(
         authenticateToken,
-        authorizeRole('admin'),
+        authorizeRoles('admin'),
         adminController.deleteDoctor
     );
 

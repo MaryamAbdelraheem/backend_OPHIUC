@@ -77,9 +77,9 @@ const send = async ({
   message,
   target_app,
   delivery_method = 'IN_APP',
-  PatientPatientId = null,
-  DoctorDoctorId = null,
-  AppointmentAppointmentId = null
+  patientId = null,
+  doctorId = null,
+  appointmentId = null
 }) => {
   // Get contextual data for dynamic content generation
   const context = await getContextData(context_type, context_id);
@@ -102,9 +102,9 @@ const send = async ({
     context_id,
     target_app,
     delivery_method,
-    PatientPatientId,            // ✅ جديد
-    DoctorDoctorId,              // ✅ جديد
-    AppointmentAppointmentId     // ✅ جديد
+    patientId,            // ✅ جديد
+    doctorId,              // ✅ جديد
+    appointmentId     // ✅ جديد
   });
 
   // Optional: handle push notification delivery (if needed)

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { createAppointment, getAllAppointmentsWithDoctorInfo } = require('../controllers/appointmentController');
-const { authenticateToken, authorizeRole } = require("../middleware/authMiddleware");
+const { authenticateToken, authorizeRoles } = require("../middleware/authMiddleware");
 const { validateRequest } = require('../middleware/validateRequest');
 const { appointmentValidationRules } = require('../validators/appointmentValidator');
 
@@ -13,13 +13,13 @@ router
     .route('/')
     .post(
         authenticateToken,
-        authorizeRole('doctor'),
+        authorizeRoles('doctor'),
         appointmentValidationRules(),
-        validateRequest,
         createAppointment
     )
     .get(
         authenticateToken,
+        authorizeRoles('doctor' , 'patient'),
         getAllAppointmentsWithDoctorInfo
     )
 module.exports = router;
