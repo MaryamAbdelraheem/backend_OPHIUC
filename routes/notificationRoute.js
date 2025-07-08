@@ -19,6 +19,7 @@ router
     .route('/')
     .get(
         authenticateToken,
+        authorizeRoles('doctor' , 'patient'),
         NotificationController.getMyNotifications
     );
 

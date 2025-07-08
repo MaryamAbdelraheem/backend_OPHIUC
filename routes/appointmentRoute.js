@@ -21,5 +21,10 @@ router
         authenticateToken,
         authorizeRoles('doctor' , 'patient'),
         getAllAppointmentsWithDoctorInfo
-    )
+    );
+    /*.get(
+        authenticateToken,
+        authorizeRoles('admin'),
+        getPatientsForDoctor*/
+
 module.exports = router;

@@ -29,6 +29,7 @@ function authorizeRoles(...allowedRoles) {
       return res.status(401).json({ message: "Unauthorized: No user found" });
     }
 
+
     if (!allowedRoles.includes(req.user.role)) {
       return res.status(403).json({
         message: `Forbidden: Access denied. Required role: ${allowedRoles.join(", ")}`
@@ -36,6 +37,7 @@ function authorizeRoles(...allowedRoles) {
     }
 
     next();
+    console.log("Role in authorizeRoles:", req.user.role);
   };
 }
 
