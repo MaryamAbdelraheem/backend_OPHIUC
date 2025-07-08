@@ -2,6 +2,7 @@
 const { Server } = require("socket.io");
 const registerVitalsHandlers = require("./vitalsSocket");
 const registerNotificationHandlers = require("./notificationSocket");
+const socketAuth = require('../middleware/socketAuth');
 
 function initSocket(server) {
   const io = new Server(server, {
@@ -11,6 +12,9 @@ function initSocket(server) {
       credentials: true
     }
   });
+
+  // ✅ JWT authentication middleware
+  io.use(socketAuth);
 
   io.on("connection", (socket) => {
     console.log(`Client connected: ${socket.id}`);
