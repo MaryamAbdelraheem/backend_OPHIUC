@@ -25,7 +25,7 @@ exports.signup = asyncHandler(async (req, res, next) => {
         weight,
         gender,
         age,
-        doctorId
+        doctorId  // 👈 عدّل هنا
     } = req.body;
 
     if (!firstName || !lastName || !email || !password || !height || !weight || !gender) {
@@ -67,7 +67,7 @@ exports.signup = asyncHandler(async (req, res, next) => {
         weight,
         gender: genderString,
         age,
-        doctorId // <-- هنا نمرر doctorId في الحقل الصحيح بقاعدة البيانات
+        DoctorDoctorId: doctorId // <-- هنا نمرر doctorId في الحقل الصحيح بقاعدة البيانات
     });
 
     // await NotificationService.send({
@@ -112,6 +112,8 @@ exports.signup = asyncHandler(async (req, res, next) => {
     });
 });
 
+
+// authPatientContrroler and doctorContrroler
 /**
  * @method POST
  * @route /api/patient/login
