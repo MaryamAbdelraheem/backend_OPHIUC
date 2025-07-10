@@ -20,10 +20,9 @@ module.exports = (sequelize, DataTypes) => {
 
 
 
-/**
-// ✅ 3. نموذج داخل أي كائن (مثلاً Device)
-// ملف: models/Device.js
 
+// 
+/*
 Device.prototype.sendAlertNotification = async function (message, recipientId) {
   const NotificationService = require('../services/NotificationService');
 
