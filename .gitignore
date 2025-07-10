@@ -8,6 +8,7 @@ npm-debug.log*
 
 # Environment variables
 .env
+config/osahealthmonitor-firebase-adminsdk-fbsvc-f42e920593.json
 
 # OS files
 .DS_Store
