@@ -6,7 +6,8 @@ const http = require("http");
 const bcrypt = require("bcrypt");
 const { getAdminByEmail } = require("./models/adminModel");
 const { generateToken, authenticateToken } = require("./middleware/authMiddleware");
-const {errorHandler, notFoundHandler} = require('./middleware/errorHandler');
+const {errorHandler, notFoundHandler} = require('./middleware/errorMiddlewre.js');
+
 
 // استيراد العلاقات
 require('./models/associationsModel');
@@ -53,7 +54,7 @@ const initSocket = require("./socket");
 
 // Error handler and handler not found
 app.use(notFoundHandler);
-app.use(errorHandler);
+app.use(globalErrorHandler);
 
 
 sequelize.sync({ force: false})
