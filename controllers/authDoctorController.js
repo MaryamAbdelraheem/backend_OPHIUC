@@ -4,7 +4,6 @@ const asyncHandler = require('express-async-handler');
 const { Doctor } = require('../models'); // استيراد موديل الطبيب
 const { generateToken } = require("../middleware/authMiddleware");
 
-const SECRET_KEY = process.env.JWT_SECRET || 'ophiucs-project-secret-jwt';
 
 /**
  * @method POST

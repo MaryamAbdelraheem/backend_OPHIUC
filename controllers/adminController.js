@@ -3,49 +3,8 @@ const bcrypt = require('bcryptjs');
 const asyncHandler = require('express-async-handler');
 const { generateToken } = require("../middleware/authMiddleware");
 const { Doctor } = require('../models'); // استيراد موديل الطبيب (في حالة استخدام قاعدة بيانات)
-//const { Admin } = require('../models');
-
-/*
-admin@pannel$12324
-admin@example.com
-*/
 
 
-// إنشاء كلمة مرور مشفرة مسبقًا
-const plainPassword = 'admin@pannel$12324';
-const hashedPassword = bcrypt.hashSync(plainPassword, 10);
-// console.log(hashedPassword);
-
-const adminUser = {
-  id: 1,
-  email: 'admin@example.com',
-  password: hashedPassword
-};
-
-exports.login = (req, res) => {
-  const { email, password } = req.body;
-
-  // أي إيميل وباسورد هيمشوا
-  if (!email || !password) {
-    return res.status(400).json({ message: "Please provide email and password" });
-  }
-
-  // بيانات عبيطة ثابتة
-  const admin = {
-    id: 1,
-    email: email,
-    role: "admin"
-  };
-
-  // توكن ثابت
-  const token = "dummy-static-token";
-
-  res.status(200).json({
-    message: "Login successful",
-    admin,
-    token
-  });
-};
 
 /**
  * @method GET

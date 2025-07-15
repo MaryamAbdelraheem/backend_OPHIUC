@@ -5,17 +5,7 @@ const { loginValidationRules } = require('../validators/authValidator');
 const { validateRequest } = require('../middleware/validateRequest');//POST /api/admin / login
 const { authenticateToken, generateToken, authorizeRoles } = require("../middleware/authMiddleware");
 
-/**
- * @route /api/admin/login
- * @access public
- */
-router
-    .route('/login')
-    .post(
-        loginValidationRules(),
-        validateRequest,
-        adminController.login
-    )
+
 /**
  * @route /api/admin/dashboard
  * @access protected
