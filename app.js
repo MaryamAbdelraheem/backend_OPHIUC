@@ -28,6 +28,10 @@ const aiRoutes = require("./routes/aiRoute");
 
 const app = express();
 app.use(cors());
+app.use(cors({
+  origin: `http://localhost:5173`, 
+  credentials: true
+}));
 app.use(express.json());  // لتحليل طلبات JSON
 app.use(express.urlencoded({ extended: true })); // لتحليل بيانات النماذج
 
@@ -41,6 +45,8 @@ app.use('/api/appointment', appointmentRoutes);
 app.use('/api/notifications', notificationRoutes); 
 app.use('/api/vitals', vitalsRoutes); 
 app.use("/api/ai", aiRoutes);
+
+
 
 const server = http.createServer(app);
 const initSocket = require("./socket");

@@ -1,6 +1,8 @@
 // في associations.js
 const { Admin, Doctor, Patient, Appointment, Notification, Vitals, Device } = require('.');
 
+
+
 // 1 To M with Doctor => Patient
 Doctor.hasMany(Patient);
 Patient.belongsTo(Doctor);
@@ -25,6 +27,7 @@ Doctor.hasMany(Notification, { foreignKey: 'doctorId' });
 // 1 To M Appointment => Notification
 Notification.belongsTo(Appointment, { foreignKey: 'appointmentId' });
 Appointment.hasMany(Notification, { foreignKey: 'appointmentId' });
+
 //  Device belongs to Patient
 Patient.hasMany(Device);
 Device.belongsTo(Patient);

@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const asyncHandler = require('express-async-handler');
 const { generateToken } = require("../middleware/authMiddleware");
 const { Doctor } = require('../models'); // استيراد موديل الطبيب (في حالة استخدام قاعدة بيانات)
-
+const { Admin } = require('../models');
 
 const SECRET_KEY = process.env.JWT_SECRET || 'ophiucs-project-secret-jwt';
 /*
@@ -14,47 +14,37 @@ admin@example.com
 const plainPassword = 'admin@pannel$12324';
 const hashedPassword = bcrypt.hashSync(plainPassword, 10);
 // console.log(hashedPassword);
-// بيانات المسؤول (يجب استبدالها بقاعدة بيانات في المستقبل)
-const adminUser = [
-    { id: 1, email: 'admin@example.com', password: hashedPassword }
-];
 
-/**
- * @method POST
- * @route /api/admin/login
- * @desc login a admin
- * @access public 
- */
-exports.login = asyncHandler(async (req, res, next) => {
+const adminUser = {
+  id: 1,
+  email: 'admin@example.com',
+  password: hashedPassword
+};
 
-    const { email, password } = req.body;
+exports.login = (req, res) => {
+  const { email, password } = req.body;
 
-    const admin = adminUser.find(user => user.email === email);
-    if (!admin) {
-        return res.status(401).json({ message: 'Invalid credentials' });
-    }
+  // أي إيميل وباسورد هيمشوا
+  if (!email || !password) {
+    return res.status(400).json({ message: "Please provide email and password" });
+  }
 
-    // Verify password after removing whitespace
-    const isMatch = await bcrypt.compare(password.trim(), admin.password);
+  // بيانات عبيطة ثابتة
+  const admin = {
+    id: 1,
+    email: email,
+    role: "admin"
+  };
 
-    if (!isMatch) {
-        return res.status(401).json({ message: 'Invalid credentials' });
-    }
+  // توكن ثابت
+  const token = "dummy-static-token";
 
-    // Create JWT token
-    const token = generateToken(admin, "admin");
-
-    // Hide password when sending data
-    const adminData = { ...admin };
-    delete adminData.password;
-
-    // Send response to client
-    res.status(200).json({
-        message: 'Login successful',
-        admin: adminData,
-        token,
-    });
-});
+  res.status(200).json({
+    message: "Login successful",
+    admin,
+    token
+  });
+};
 
 /**
  * @method GET

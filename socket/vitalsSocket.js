@@ -31,18 +31,20 @@ function registerVitalsHandlers(socket, io) {
         }
 
         // 4. Combine data for AI
-        const completeData = {
-          Age: patient.age,
-          Gender: patient.gender,
-          BMI: patient.bmi,
-          Snoring: patient.snoring || "False",
-          Oxygen_Saturation: sensorData.Oxygen_Saturation,
-          AHI: sensorData.AHI,
-          ECG_Heart_Rate: sensorData.ECG_Heart_Rate,
-          Nasal_Airflow: sensorData.Nasal_Airflow,
-          Chest_Movement: sensorData.Chest_Movement,
-          EEG_Sleep_Stage: sensorData.EEG_Sleep_Stage,
-        };
+        const bmi = patient.weight / (patient.height * patient.height);
+
+      const completeData = {
+      Age: patient.age,
+      Gender: patient.gender,
+      BMI: parseFloat(bmi.toFixed(2)), 
+      //Snoring: patient.snoring || "False",
+      Oxygen_Saturation: sensorData.Oxygen_Saturation,
+      //AHI: sensorData.AHI,
+      ECG_Heart_Rate: sensorData.ECG_Heart_Rate,
+      //Nasal_Airflow: sensorData.Nasal_Airflow,
+      //Chest_Movement: sensorData.Chest_Movement,
+      //EEG_Sleep_Stage: sensorData.EEG_Sleep_Stage,
+};
 
         // 5. Send to AI
         const aiResponse = await axios.post("http://localhost:4000/api/ai/predict", completeData);

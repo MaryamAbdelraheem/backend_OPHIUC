@@ -40,6 +40,7 @@ router
         authorizeRoles("patient"),
         aiController.handleReport
     )
+ 
 
 /**
  * @route /api/ai/full_report
@@ -52,5 +53,6 @@ router
         authorizeRoles("doctor"),
         aiController.handleFullReport
     )
+
 
 module.exports = router;
