@@ -5,11 +5,12 @@ const { generateToken } = require("../middleware/authMiddleware");
 const { Doctor } = require('../models'); // استيراد موديل الطبيب (في حالة استخدام قاعدة بيانات)
 const { Admin } = require('../models');
 
-const SECRET_KEY = process.env.JWT_SECRET || 'ophiucs-project-secret-jwt';
 /*
 admin@pannel$12324
 admin@example.com
 */
+
+
 // إنشاء كلمة مرور مشفرة مسبقًا
 const plainPassword = 'admin@pannel$12324';
 const hashedPassword = bcrypt.hashSync(plainPassword, 10);

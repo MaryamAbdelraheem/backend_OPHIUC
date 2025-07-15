@@ -2,7 +2,7 @@
 
 const { DataTypes } = require('sequelize');
 const config = require('../config/config');
-const sequelize = require('../util/database')
+const sequelize = require('../utils/database')
 
 const Admin = require('./adminModel')(sequelize, DataTypes);
 const Doctor = require('./doctorModel')(sequelize, DataTypes);

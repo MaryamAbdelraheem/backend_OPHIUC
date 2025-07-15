@@ -65,7 +65,7 @@
 
 // After Update
 const { Notification } = require('../models');
-const { getContextData, generateMessageByType } = require('../util/notificationTemplates');
+const { getContextData, generateMessageByType } = require('../utils/notificationTemplates');
 
 const send = async ({
   type,
