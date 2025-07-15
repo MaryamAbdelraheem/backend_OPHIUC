@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const asyncHandler = require('express-async-handler');
 const { generateToken } = require("../middleware/authMiddleware");
 const { Doctor } = require('../models'); // استيراد موديل الطبيب (في حالة استخدام قاعدة بيانات)
-const { Admin } = require('../models');
+//const { Admin } = require('../models');
 
 /*
 admin@pannel$12324

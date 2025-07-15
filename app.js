@@ -15,7 +15,7 @@ dotenv.config();
 const sequelize = require("./utils/database");
 require("./models/associationsModel"); // العلاقات بين الموديلات
 
-const { getAdminByEmail } = require("./models/adminModel");
+//const { getAdminByEmail } = require("./models/adminModel");
 const { generateToken, authenticateToken } = require("./middleware/authMiddleware");
 const { globalErrorHandler, notFoundHandler } = require("./middleware/errorMiddleware");
 
@@ -36,7 +36,8 @@ const aiRoutes = require("./routes/aiRoute");
 const app = express();
 
 app.use(cors({
-  origin: "*", // 🔒 يفضل تحددي الأصل الحقيقي في الإنتاج
+  origin: "*", 
+  //write you url in origin
   credentials: true,
 }));
 app.use(express.json());
