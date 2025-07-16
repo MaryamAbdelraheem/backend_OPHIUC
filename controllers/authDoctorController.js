@@ -61,7 +61,7 @@ const tokenBlacklist = new Set();
 exports.logout = asyncHandler(async (req, res) => {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        return res.status(401).json({ message: "No token provided" });
+        return next(new ApiError("No token provided", 401));
     }
 
     const token = authHeader.split(" ")[1];
@@ -69,7 +69,7 @@ exports.logout = asyncHandler(async (req, res) => {
     try {
         jwt.verify(token, SECRET_KEY);
     } catch (error) {
-        return res.status(401).json({ message: "Invalid token" });
+        return next(new ApiError("Invalid token", 401));
     }
 
     tokenBlacklist.add(token);

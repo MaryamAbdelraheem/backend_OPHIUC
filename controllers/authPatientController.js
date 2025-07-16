@@ -1,3 +1,4 @@
+const ApiError = require('../utils/errors/ApiError');
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { Patient, Doctor } = require("../models");
@@ -29,14 +30,14 @@ exports.signup = asyncHandler(async (req, res, next) => {
     } = req.body;
 
     if (!firstName || !lastName || !email || !password || !height || !weight || !gender) {
-        return res.status(400).json({ message: "All required fields must be provided" });
+        return next(new ApiError("All required fields must be provided", 400));
     }
 
     // Validate doctor exists
     if (doctorId) {
         const doctor = await Doctor.findByPk(doctorId);
         if (!doctor) {
-            return res.status(400).json({ message: "Invalid doctor ID" });
+            return next(new ApiError("Invalid doctor ID", 400));
         }
     }
 
@@ -48,13 +49,13 @@ exports.signup = asyncHandler(async (req, res, next) => {
     const genderString = genderMap[gender];
 
     if (!genderString) {
-        return res.status(400).json({ message: "Invalid gender value" });
+        return next(new ApiError("Invalid gender value", 400));
     }
 
     // Check if email is already used
     const existingPatient = await Patient.findOne({ where: { email } });
     if (existingPatient) {
-        return res.status(400).json({ message: "Email already registered" });
+        return next(new ApiError("Email already registered", 400));
     }
 
     // Create new patient
@@ -67,7 +68,7 @@ exports.signup = asyncHandler(async (req, res, next) => {
         weight,
         gender: genderString,
         age,
-        doctorId // <-- هنا نمرر doctorId في الحقل الصحيح بقاعدة البيانات
+        doctorId 
     });
 
     await NotificationService.send({
@@ -79,15 +80,16 @@ exports.signup = asyncHandler(async (req, res, next) => {
         delivery_method: 'IN_APP',
         patientId: patient.patientId,
         doctorId: doctorId || null,
-        appointmentId: null         //  نقدر تحطها بقيمة حقيقية بعد كدا
+        appointmentId: null         
     });
 
     // Generate token
     const token = generateToken(patient, "patient");
 
     res.status(201).json({
+        status: 'success',
         message: "The account has been created successfully",
-        patient: {
+        data: {
             patientId: patient.patientId,
             firstName: patient.firstName,
             lastName: patient.lastName,
@@ -117,22 +119,24 @@ exports.login = asyncHandler(async (req, res, next) => {
     // Fetch patient from DB
     const patient = await Patient.findOne({ where: { email } });
     if (!patient) {
-        return res.status(401).json({ message: "Invalid Credentials" });
+        return next(new ApiError("Invalid Credentials", 401));
     }
 
     // Verify password
     const isMatch = await bcrypt.compare(password, patient.password);
 
     if (!isMatch) {
-        return res.status(401).json({ message: "Invalid Credentials" });
+        return next(new ApiError("Invalid Credentials", 401));
     }
 
     // Generate JWT
     const token = generateToken(patient, "patient");
 
     res.status(200).json({
+        status: 'success',
         message: "Login successfully",
-        patient: {
+        data: {
+
             patient_id: patient.patientId,
             first_name: patient.firstName,
             last_name: patient.lastName,
@@ -143,7 +147,7 @@ exports.login = asyncHandler(async (req, res, next) => {
             height: patient.height,
             weight: patient.weight,
             gender: patient.gender,
-            doctorId: patient.DoctorDoctorId
+            doctorId: patient.doctorId
         },
         token
     });
@@ -160,7 +164,7 @@ exports.login = asyncHandler(async (req, res, next) => {
 exports.logout = asyncHandler(async (req, res) => {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        return res.status(401).json({ message: "Unauthorized: No token provided" });
+        return next(new ApiError("Unauthorized: No token provided", 401));
     }
 
     const token = authHeader.split(" ")[1];
@@ -169,7 +173,7 @@ exports.logout = asyncHandler(async (req, res) => {
     try {
         jwt.verify(token, SECRET_KEY);
     } catch (error) {
-        return res.status(401).json({ message: "Invalid token" });
+        return next(new ApiError("Invalid token", 401));
     }
 
     // Store blacklisted tokens 
@@ -178,6 +182,7 @@ exports.logout = asyncHandler(async (req, res) => {
     tokenBlacklist.add(token);
 
     res.status(200).json({
+        status: 'success',
         message: "You have successfully logged out"
     });
 });
