@@ -1,8 +1,6 @@
 // في associations.js
 const { Doctor, Patient, Appointment, Notification, Vitals, Device } = require('.');
 
-
-
 // 1 To M with Doctor => Patient
 Doctor.hasMany(Patient);
 Patient.belongsTo(Doctor);
