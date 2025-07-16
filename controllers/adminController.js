@@ -4,8 +4,6 @@ const asyncHandler = require('express-async-handler');
 const { generateToken } = require("../middleware/authMiddleware");
 const { Doctor } = require('../models'); // استيراد موديل الطبيب (في حالة استخدام قاعدة بيانات)
 
-
-
 /**
  * @method GET
  * @route /api/admin/users/doctors
@@ -24,8 +22,11 @@ exports.viewDoctors = asyncHandler(async (req, res, next) => {
 
     // 2. إرسال البيانات للأطباء
     res.status(200).json({
+        status: 'success',
         message: 'Doctors fetched successfully',
-        doctors,  // قائمة الأطباء
+        data: {
+            doctors
+        }
     });
 });
 
