@@ -23,6 +23,7 @@ const { globalErrorHandler, notFoundHandler } = require("./middleware/errorMiddl
 // ======================
 // Routes
 // ======================
+const authRoutes = require('./routes/authRoute');
 const adminRoutes = require("./routes/adminRoute");
 const doctorRoutes = require("./routes/doctorRoute");
 const patientRoutes = require("./routes/patientRoute");
@@ -47,6 +48,7 @@ app.use(express.urlencoded({ extended: true }));
 // ======================
 // API Routes
 // ======================
+app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/doctors", doctorRoutes);
 app.use("/api/v1/patients", patientRoutes);

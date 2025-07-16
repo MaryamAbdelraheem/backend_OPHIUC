@@ -1,8 +1,7 @@
-const jwt = require("jsonwebtoken");
+const ApiError = require('../utils/errors/ApiError');
 const bcrypt = require("bcryptjs");
 const { Patient } = require("../models");
 const asyncHandler = require('express-async-handler');
-const { generateToken } = require("../middleware/authMiddleware");
 
 /**
  * @method PUT
@@ -15,7 +14,7 @@ exports.updateProfile = asyncHandler(async (req, res, next) => {
     const {
         firstName,
         lastName,
-        email, 
+        email,
         password,
         phoneNumber,
         medicalHistory,
@@ -26,10 +25,10 @@ exports.updateProfile = asyncHandler(async (req, res, next) => {
         img
     } = req.body;
 
-    // 1. التحقق من وجود المريض
     const patient = await Patient.findByPk(patientId);
+
     if (!patient) {
-        return res.status(404).json({ message: "Patient not found" });
+        return next(new ApiError("Patient not found", 404))
     }
 
     // 2. تحديث الحقول فقط إذا تم إرسالها
@@ -60,8 +59,11 @@ exports.updateProfile = asyncHandler(async (req, res, next) => {
     delete patientData.password;
 
     res.status(200).json({
+        status: 'success',
         message: "Profile updated successfully",
-        patient: patientData
+        data: {
+            patient: patientData
+        }
     });
 });
 
@@ -80,13 +82,16 @@ exports.getProfile = asyncHandler(async (req, res, next) => {
     });
 
     if (!patient) {
-        return res.status(404).json({ message: "Patient not found" });
+        return next(new ApiError("Patient not found", 404))
     }
 
     // 2. إرسال بيانات المريض
     res.status(200).json({
+        status: 'success',
         message: "Patient profile fetched successfully",
-        patient
+        data: {
+            patient
+        }
     });
 });
 

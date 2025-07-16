@@ -1,9 +1,7 @@
-const jwt = require('jsonwebtoken');
+const ApiError = require('../utils/errors/ApiError');
 const bcrypt = require('bcryptjs');
 const asyncHandler = require('express-async-handler');
-const { generateToken } = require("../middleware/authMiddleware");
 const { Doctor } = require('../models'); // استيراد موديل الطبيب (في حالة استخدام قاعدة بيانات)
-
 /**
  * @method GET
  * @route /api/admin/users/doctors
@@ -11,16 +9,14 @@ const { Doctor } = require('../models'); // استيراد موديل الطبي
  * @access private
  */
 exports.viewDoctors = asyncHandler(async (req, res, next) => {
-    // 1. جلب قائمة الأطباء من قاعدة البيانات
     const doctors = await Doctor.findAll({
         attributes: { exclude: ['password'] }
     });
 
     if (!doctors) {
-        return res.status(404).json({ message: 'No doctors found' });
+        return next(new ApiError('No doctors found', 404));
     }
 
-    // 2. إرسال البيانات للأطباء
     res.status(200).json({
         status: 'success',
         message: 'Doctors fetched successfully',
@@ -32,29 +28,23 @@ exports.viewDoctors = asyncHandler(async (req, res, next) => {
 
 /**
  * @method POST
- * @route /api/admin/users/doctors
+ * @route /api/v1/admin/users/doctors
  * @desc Add doctor
- * @access private
+ * @access Private (Admin)
  */
 exports.addDoctor = asyncHandler(async (req, res, next) => {
     const { firstName, lastName, email, password, phoneNumber, specialization, gender } = req.body;
 
-    // 1. تحقق من وجود كل البيانات المطلوبة
-    if (!firstName || !lastName || !email || !password || !phoneNumber || !specialization || !gender) {
-        return res.status(400).json({ message: "Please provide all required fields" });
-    }
-
-    // 2. التحقق إذا كان الطبيب موجود بالفعل بنفس الإيميل
+    // 1. التأكد من عدم وجود طبيب بنفس الإيميل
     const existingDoctor = await Doctor.findOne({ where: { email } });
-
     if (existingDoctor) {
-        return res.status(400).json({ message: "Doctor with this email already exists" });
+        return next(new ApiError('Doctor with this email already exists', 400));
     }
 
-    // 3. تشفير كلمة المرور
+    // 2. تشفير كلمة المرور
     const hashedPassword = await bcrypt.hash(password.trim(), 10);
 
-    // 4. إنشاء حساب الطبيب
+    // 3. إنشاء حساب الطبيب
     const newDoctor = await Doctor.create({
         firstName,
         lastName,
@@ -65,14 +55,16 @@ exports.addDoctor = asyncHandler(async (req, res, next) => {
         gender
     });
 
-    // 5. إخفاء كلمة المرور قبل إرسال الرد
-    const doctorData = { ...newDoctor.toJSON() };
-    delete doctorData.password;
+    // 4. تجهيز البيانات بدون الباسورد
+    const { password: _, ...doctorData } = newDoctor.toJSON();
 
-    // 6. إرسال الرد
+    // 5. إرسال الرد
     res.status(201).json({
+        status: 'success',
         message: "Doctor created successfully",
-        doctor: doctorData,
+        data: {
+            doctor: doctorData,
+        }
     });
 });
 
@@ -90,7 +82,7 @@ exports.deleteDoctor = asyncHandler(async (req, res, next) => {
     const doctor = await Doctor.findByPk(id);
 
     if (!doctor) {
-        return res.status(404).json({ message: "Doctor not found" });
+        return next(new ApiError("Doctor not found", 404));
     }
 
     // 2. حذف الطبيب
@@ -98,6 +90,7 @@ exports.deleteDoctor = asyncHandler(async (req, res, next) => {
 
     // 3. إرسال الرد
     res.status(200).json({
+        status: "success",
         message: "Doctor deleted successfully",
     });
 });

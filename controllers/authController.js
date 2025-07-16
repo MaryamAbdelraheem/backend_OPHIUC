@@ -22,11 +22,11 @@ exports.loginAdmin = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
 
     if (!email && !password) {
-        return res.status(400).json({ message: "Please provide email and password" });
-    }
+        return next(new ApiError("Please provide email and password"), 400)
+     }
 
     if (email !== STATIC_ADMIN.email || password !== STATIC_ADMIN.password) {
-        return res.status(401).json({ message: "Invalid credentials" });
+        return next(new ApiError("Invalid credentials"), 401)
     }
 
     const token = jwt.sign(
@@ -40,11 +40,12 @@ exports.loginAdmin = asyncHandler(async (req, res) => {
     );
 
     res.status(200).json({
+        status: 'success',
         message: "Login successful",
-        admin: {
-            id: STATIC_ADMIN.id,
-            email: STATIC_ADMIN.email,
-            role: STATIC_ADMIN.role,
+        data: {
+                id: STATIC_ADMIN.id,
+                email: STATIC_ADMIN.email,
+                role: STATIC_ADMIN.role,
         },
         token,
     });

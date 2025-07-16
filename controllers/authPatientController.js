@@ -25,7 +25,7 @@ exports.signup = asyncHandler(async (req, res, next) => {
         weight,
         gender,
         age,
-        doctorId  // 👈 عدّل هنا
+        doctorId
     } = req.body;
 
     if (!firstName || !lastName || !email || !password || !height || !weight || !gender) {
@@ -67,19 +67,9 @@ exports.signup = asyncHandler(async (req, res, next) => {
         weight,
         gender: genderString,
         age,
-        DoctorDoctorId: doctorId // <-- هنا نمرر doctorId في الحقل الصحيح بقاعدة البيانات
+        doctorId // <-- هنا نمرر doctorId في الحقل الصحيح بقاعدة البيانات
     });
 
-    // await NotificationService.send({
-    //     type: 'GENERAL',
-    //     recipient_id: patient.patientId,
-    //     context_type: 'NONE',
-    //     context_id: null,
-    //     target_app: 'PATIENT_APP',
-    //     delivery_method: 'IN_APP'
-    // });
-
-    // After Update
     await NotificationService.send({
         type: 'GENERAL',
         recipient_id: patient.patientId,
@@ -87,8 +77,8 @@ exports.signup = asyncHandler(async (req, res, next) => {
         context_id: null,
         target_app: 'PATIENT_APP',
         delivery_method: 'IN_APP',
-        patientId: patient.patientId,   
-        doctorId: doctorId || null,      
+        patientId: patient.patientId,
+        doctorId: doctorId || null,
         appointmentId: null         //  نقدر تحطها بقيمة حقيقية بعد كدا
     });
 

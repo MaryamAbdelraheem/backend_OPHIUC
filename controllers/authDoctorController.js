@@ -1,3 +1,4 @@
+const ApiError = require('../utils/errors/ApiError');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const asyncHandler = require('express-async-handler');
@@ -8,42 +9,45 @@ const { generateToken } = require("../middleware/authMiddleware");
 /**
  * @method POST
  * @route /api/doctor/login
- * @desc login a doctor
- * @access public 
+ * @desc Login a doctor
+ * @access Public
  */
-
 exports.login = asyncHandler(async (req, res, next) => {
     const { email, password } = req.body;
 
-    // 1. Check if doctor exists
+    // 1. التحقق من وجود الطبيب
     const doctor = await Doctor.findOne({ where: { email } });
+
     if (!doctor) {
-        return res.status(401).json({ message: 'Invalid credentials' });
+        return next(new ApiError('Invalid credentials', 401));
     }
 
-    // 2. Verify password
-    const isMatch = await bcrypt.compare(password, doctor.password);
-    if (!isMatch) {
-        return res.status(401).json({ message: 'Invalid credentials' });
+    // 2. التحقق من كلمة المرور
+    const isPasswordValid = await bcrypt.compare(password, doctor.password);
+    if (!isPasswordValid) {
+        return next(new ApiError('Invalid credentials', 401));
     }
 
-    // 3. Generate token
+    // 3. إنشاء التوكن
     const token = generateToken(doctor, "doctor");
 
-    res.status(200).json({
-        message: 'Login successful',
-        doctor: {
-            doctorId: doctor.doctorId,
-            firstName: doctor.firstName,
-            lastName: doctor.lastName,
-            email: doctor.email,
-            phoneNumber: doctor.phoneNumber,
-            specialization: doctor.specialization,
-            gender: doctor.gender
-        },
-        token
-    });
+    // 4. إعداد البيانات المرسلة
+    const { doctorId, firstName, lastName, phoneNumber, specialization, gender } = doctor;
 
+    res.status(200).json({
+        status: 'success',
+        message: 'Login successful',
+        data: {
+            doctorId,
+            firstName,
+            lastName,
+            email,
+            phoneNumber,
+            specialization,
+            gender,
+            token
+        }
+    });
 });
 
 const tokenBlacklist = new Set();
@@ -71,6 +75,7 @@ exports.logout = asyncHandler(async (req, res) => {
     tokenBlacklist.add(token);
 
     res.status(200).json({
+        status: 'successs',
         message: "Logout successful"
     });
 });
