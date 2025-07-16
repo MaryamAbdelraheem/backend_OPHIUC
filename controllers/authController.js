@@ -5,7 +5,7 @@ const { generateToken } = require("../middleware/authMiddleware");
 const NotificationService = require('../services/NotificationService');
 const { Doctor, Patient } = require('../models');
 
-const SECRET_KEY = process.env.JWT_SECRET  "ophiucs-project-secret-jwt";
+const SECRET_KEY = process.env.JWT_SECRET || "ophiucs-project-secret-jwt";
 
 // بيانات الأدمن من .env
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
@@ -21,7 +21,7 @@ const STATIC_ADMIN = {
 exports.loginAdmin = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
 
-    if (!email  !password) {
+    if (!email && !password) {
         return res.status(400).json({ message: "Please provide email and password" });
     }
 
