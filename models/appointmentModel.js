@@ -23,21 +23,6 @@ module.exports = (sequelize, DataTypes) => {
     });
 
     
-  
-  //   /// Hook: Send notification after appointment is created
-  // Appointment.afterCreate(async (appointment, options) => {
-  //   const NotificationService = require('../services/NotificationService');
-
-  //   await NotificationService.send({
-  //     type: 'APPOINTMENT',
-  //     recipient_id: appointment.PatientPatientId,
-  //     context_type: 'APPOINTMENT',
-  //     context_id: appointment.appointment_id,
-  //     target_app: 'patient'
-  //   });
-  // });
-  
-  //// After Update
 
   Appointment.afterCreate(async (appointment, options) => {
   const NotificationService = require('../services/NotificationService');

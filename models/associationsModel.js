@@ -1,11 +1,9 @@
 // في associations.js
 const { Doctor, Patient, Appointment, Notification, Vitals, Device } = require('.');
 
-
-
 // 1 To M with Doctor => Patient
-Doctor.hasMany(Patient);
-Patient.belongsTo(Doctor);
+Doctor.hasMany(Patient, { foreignKey: 'doctorId' });
+Patient.belongsTo(Doctor, { foreignKey: 'doctorId' });
 
 // 1 To M Patient => Appointment
 Patient.hasMany(Appointment, { foreignKey: 'patientId' });
@@ -15,40 +13,36 @@ Appointment.belongsTo(Patient, { foreignKey: 'patientId' });
 Doctor.hasMany(Appointment, { foreignKey: 'doctorId' });
 Appointment.belongsTo(Doctor, { foreignKey: 'doctorId' });
 
-
 // 1 To M Patient => Notification
-Notification.belongsTo(Patient, { foreignKey: 'patientId' });
 Patient.hasMany(Notification, { foreignKey: 'patientId' });
+Notification.belongsTo(Patient, { foreignKey: 'patientId' });
 
 // 1 To M Doctor => Notification
-Notification.belongsTo(Doctor, { foreignKey: 'doctorId' });
 Doctor.hasMany(Notification, { foreignKey: 'doctorId' });
+Notification.belongsTo(Doctor, { foreignKey: 'doctorId' });
 
 // 1 To M Appointment => Notification
-Notification.belongsTo(Appointment, { foreignKey: 'appointmentId' });
 Appointment.hasMany(Notification, { foreignKey: 'appointmentId' });
+Notification.belongsTo(Appointment, { foreignKey: 'appointmentId' });
 
-//  Device belongs to Patient
-Patient.hasMany(Device);
-Device.belongsTo(Patient);
+// Device belongs to Patient
+Patient.hasMany(Device, { foreignKey: 'patientId' });
+Device.belongsTo(Patient, { foreignKey: 'patientId' });
 
-//Device belongs to Doctor
-Doctor.hasMany(Device);
-Device.belongsTo(Doctor);
+// Device belongs to Doctor
+Doctor.hasMany(Device, { foreignKey: 'doctorId' });
+Device.belongsTo(Doctor, { foreignKey: 'doctorId' });
 
-// ✅ Vitals belongs to Patient
-Patient.hasMany(Vitals);
-Vitals.belongsTo(Patient);
+// Vitals belongs to Patient
+Patient.hasMany(Vitals, { foreignKey: 'patientId' });
+Vitals.belongsTo(Patient, { foreignKey: 'patientId' });
 
-// ✅ Vitals belongs to Doctor
-Doctor.hasMany(Vitals);
-Vitals.belongsTo(Doctor);
+// Vitals belongs to Doctor
+Doctor.hasMany(Vitals, { foreignKey: 'doctorId' });
+Vitals.belongsTo(Doctor, { foreignKey: 'doctorId' });
 
-// ✅ Vitals belongs to Device
-Device.hasMany(Vitals);
-Vitals.belongsTo(Device);
+// Vitals belongs to Device
+Device.hasMany(Vitals, { foreignKey: 'deviceId' });
+Vitals.belongsTo(Device, { foreignKey: 'deviceId' });
 
-
-module.exports = { Doctor, Patient,  Appointment, Vitals, Device };
-
-
+module.exports = { Doctor, Patient, Appointment, Notification, Vitals, Device };
