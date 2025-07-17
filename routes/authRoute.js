@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const { signupPatientValidationRules , loginValidationRules } = require('../validators/authValidator')
-const { signupPatient, login } = require('../controllers/authController');
+const { signupPatient, login, logout } = require('../controllers/authController');
 
 
 /**
@@ -15,20 +15,24 @@ router
         signupPatient
     )
 
-//login>>>>>>>>>>>>>>>>>>>>>>
-/*router
+/**
+ * @route POST /api/v1/auth/login
+ */
+router
     .route('/login')
     .post(
-        loginValidationRules(),
+        loginValidationRules,
         login
     )
-*/
 
-//logout>>>>>>>>>>>>>>>>>>>>
-/*router
+
+/**
+ * @route POST /api/v1/auth/logout
+ */
+router
     .route('/logout')
     .post(
-
+        logout
     )
-*/
+
 module.exports = router;

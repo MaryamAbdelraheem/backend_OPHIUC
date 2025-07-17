@@ -1,7 +1,7 @@
 const ApiError = require('../utils/errors/ApiError');
 const jwt = require("jsonwebtoken");
-
-const bcrypt = require("bcryptjs");                                      //
+const redisClient = require("../config/redis");
+const bcrypt = require("bcryptjs");                                      
 const asyncHandler = require('express-async-handler');
 const { generateToken } = require("../middleware/authMiddleware");
 const NotificationService = require('../services/NotificationService');
@@ -184,13 +184,36 @@ exports.login = asyncHandler(async (req, res, next) => {
     return next(new ApiError("Invalid credentials", 401));
 });
 
+
+
+
+global.tokenBlacklist = global.tokenBlacklist || new Set();
 /**
  * @method POST
  * @route /api/v1/auth/logout
- * @desc Logout  patient and doctor
+ * @desc Logout patient and doctor
  * @access public 
  */
-//logout -> patient and doctor
-exports.logout = asyncHandler(async (req, res)=>{
-    
+
+
+exports.logout = asyncHandler(async (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        return next(new ApiError("Unauthorized: No token provided", 401));
+    }
+
+    const token = authHeader.split(" ")[1];
+
+    try {
+        jwt.verify(token, SECRET_KEY);
+    } catch (error) {
+        return next(new ApiError("Invalid token", 401));
+    }
+
+    global.tokenBlacklist.add(token);
+
+    res.status(200).json({
+        status: "success",
+        message: "You have successfully logged out",
+    });
 });
