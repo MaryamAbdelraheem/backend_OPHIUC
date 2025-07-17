@@ -1,6 +1,6 @@
 const ApiError = require('../utils/errors/ApiError');
 const jwt = require("jsonwebtoken");
-
+const redisClient = require('../config/redisClient');
 const bcrypt = require("bcryptjs");                                      //
 const asyncHandler = require('express-async-handler');
 const { generateToken } = require("../middleware/authMiddleware");
