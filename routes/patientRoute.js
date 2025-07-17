@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const {getProfile, updateProfile} = require("../controllers/patientController");
-const { handlePrediction, handleTreatment, handleReport, handleFullReport } = require("../controllers/aiController");
+const { handlePrediction, handleTreatment, handleReport } = require("../controllers/aiController");
 const { } = require("../validators/authValidator");
 const { authenticateToken, authorizeRoles } = require("../middleware/authMiddleware");
 
@@ -28,50 +28,37 @@ router
 // Existing routes from Railway Server
 // AI Routes for Patient
 /**
- * @route https://sleep-apnea-api-production.up.railway.app/predict
+ * @route http://localhost:4000/api/v1/patients/predict
  * @access protected
  */
-router
-    .route("/predict")
-    .post(
-        authenticateToken,
-        authorizeRoles("doctor", "patient"),
-        handlePrediction
-    );
-/**
- * @route https://sleep-apnea-api-production.up.railway.app/treatment
- * @access protected
- */
-router
-    .route("/treatment")
-    .post(
-        authenticateToken,
-        authorizeRoles("doctor", "patient"),
-        handleTreatment
-    );
+router.post(
+    "/predict",
+    authenticateToken,
+    authorizeRoles("patient"),
+    handlePrediction
+);
 
 /**
- * @route https://sleep-apnea-api-production.up.railway.app/report
+ * @route http://localhost:4000/api/v1/patients/treatment
  * @access protected
  */
-router
-    .route('/report')
-    .post(
-        authenticateToken,
-        authorizeRoles("patient"),
-        handleReport
-    )
+router.post(
+    "/treatment",
+    authenticateToken,
+    authorizeRoles("patient"),
+    handleTreatment
+);
 
 /**
- * @route https://sleep-apnea-api-production.up.railway.app/full_report
+ * @route http://localhost:4000/api/v1/patients/report
  * @access protected
  */
-router
-    .route('/full_report')
-    .post(
-        authenticateToken,
-        authorizeRoles("doctor"),
-        handleFullReport
-    );
+router.post(
+    "/report",
+    authenticateToken,
+    authorizeRoles("patient"),
+    handleReport
+);
+
 
 module.exports = router;

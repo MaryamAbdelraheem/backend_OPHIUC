@@ -4,7 +4,8 @@ const aiService = require("../services/aiService");
 const asyncHandler = require("express-async-handler");
 
 exports.handlePrediction = asyncHandler(async (req, res, next) => {
-  const result = await aiService.predictSleepApnea(req.body);
+  const token = req.headers.authorization?.split(" ")[1]; // استخراج التوكن
+  const result = await aiService.predictSleepApnea(req.body, token);
 
   if (!result) {
     return next(new ApiError("Prediction failed or no result returned", 400));
@@ -36,7 +37,8 @@ exports.handlePrediction = asyncHandler(async (req, res, next) => {
 });
 
 exports.handleTreatment = asyncHandler(async (req, res, next) => {
-  const result = await aiService.getTreatmentPlan(req.body);
+  const token = req.headers.authorization?.split(" ")[1];
+  const result = await aiService.getTreatmentPlan(req.body, token);
 
   if (!result) {
     return next(new ApiError('No treatment plan found', 404));
@@ -50,7 +52,8 @@ exports.handleTreatment = asyncHandler(async (req, res, next) => {
 });
 
 exports.handleReport = asyncHandler(async (req, res, next) => {
-  const result = await aiService.getReport(req.body);
+  const token = req.headers.authorization?.split(" ")[1];
+  const result = await aiService.getReport(req.body, token);
 
   if (!result) {
     return next(new ApiError('No report found', 404));
@@ -64,7 +67,8 @@ exports.handleReport = asyncHandler(async (req, res, next) => {
 });
 
 exports.handleFullReport = asyncHandler(async (req, res, next) => {
-  const result = await aiService.getFullReport(req.body);
+  const token = req.headers.authorization?.split(" ")[1];
+  const result = await aiService.getFullReport(req.body, token);
 
   if (!result) {
     return next(new ApiError('No full report found', 404));
