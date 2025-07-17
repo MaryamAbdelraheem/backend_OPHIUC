@@ -1,8 +1,8 @@
 const { body } = require('express-validator');
-const { validateResult } = require("../middleware/validateRequest");
+const { validateRequest } = require("../middleware/validateRequest");
 
 // Signup validation 
-exports.signupPatientValidationRules = () => [
+exports.signupPatientValidationRules = [
     body('firstName')
         .notEmpty().withMessage('First name is required')
         .isLength({ min: 2 }).withMessage('First name must be at least 2 characters'),
@@ -37,11 +37,12 @@ exports.signupPatientValidationRules = () => [
 
     body('doctorId')
         .optional()
-        .isInt({ min: 1 }).withMessage('Doctor ID must be a valid integer')
+        .isInt({ min: 1 }).withMessage('Doctor ID must be a valid integer'),
+    validateRequest
 ];
 
 //Login validation
-exports.loginValidationRules = ()=>[
+exports.loginValidationRules = [
     body('email')
         .notEmpty().withMessage('Email is required')
         .isEmail().withMessage('Please enter a valid email address'),
@@ -49,5 +50,5 @@ exports.loginValidationRules = ()=>[
     body('password')
         .notEmpty().withMessage('Password is required')
         .isLength({ min: 8 }).withMessage('Password must be at least 8 characters long'),
-        validateResult
+    validateRequest
 ];

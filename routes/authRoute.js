@@ -5,11 +5,13 @@ const { signupPatientValidationRules , loginValidationRules } = require('../vali
 const { signupPatient, login } = require('../controllers/authController');
 
 
-//signup patient>>>>>>>>>>>>>>
+/**
+ * @route POST /api/v1/auth/signup
+ */
 router
-    .route('/signupPatient')
+    .route('/signup')
     .post(
-        signupPatientValidationRules(),
+        signupPatientValidationRules,
         signupPatient
     )
 
