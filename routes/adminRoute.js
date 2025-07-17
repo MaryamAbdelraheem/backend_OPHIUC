@@ -18,7 +18,7 @@ router
         (req, res) => {
             res.json({ message: "Welcome to the dashboard", user: req.user });
         }
-    );
+    )
 
 /**
  * @route /api/admin/users/doctors
@@ -47,7 +47,7 @@ router
         authenticateToken,
         authorizeRoles('admin'),
         adminController.deleteDoctor
-    );
+    )
 
 
 module.exports = router;

@@ -17,7 +17,7 @@ const sequelize = require("./utils/database");
 require("./models/associationsModel"); // العلاقات بين الموديلات
 
 //const { getAdminByEmail } = require("./models/adminModel");
-const { generateToken, authenticateToken } = require("./middleware/authMiddleware");
+//const { generateToken, authenticateToken } = require("./middleware/authMiddleware");
 const { globalErrorHandler, notFoundHandler } = require("./middleware/errorMiddleware");
 
 // ======================
@@ -58,7 +58,7 @@ app.use("/api/v1/vitals", vitalsRoutes);
 app.use("/api/v1/ai", aiRoutes);
 
 // ======================
-// ⚠️ Error Handling
+// Error Handling
 // ======================
 app.use(notFoundHandler);
 app.use(globalErrorHandler);

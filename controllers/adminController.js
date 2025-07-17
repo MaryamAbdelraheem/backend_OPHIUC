@@ -2,6 +2,40 @@ const ApiError = require('../utils/errors/ApiError');
 const bcrypt = require('bcryptjs');
 const asyncHandler = require('express-async-handler');
 const { Doctor } = require('../models'); // استيراد موديل الطبيب (في حالة استخدام قاعدة بيانات)
+
+/*exports.loginAdmin = asyncHandler(async (req, res) => {
+    const { email, password } = req.body;
+
+    if (!email && !password) {
+        return next(new ApiError("Please provide email and password"), 400)
+     }
+
+    if (email !== STATIC_ADMIN.email || password !== STATIC_ADMIN.password) {
+        return next(new ApiError("Invalid credentials"), 401)
+    }
+
+    const token = jwt.sign(
+        {
+            id: STATIC_ADMIN.id,
+            email: STATIC_ADMIN.email,
+            role: STATIC_ADMIN.role,
+        },
+        SECRET_KEY,
+        { expiresIn: "1d" }
+    );
+
+    res.status(200).json({
+        status: 'success',
+        message: "Login successful",
+        data: {
+                id: STATIC_ADMIN.id,
+                email: STATIC_ADMIN.email,
+                role: STATIC_ADMIN.role,
+        },
+        token,
+    });
+});
+*/
 /**
  * @method GET
  * @route /api/admin/users/doctors
