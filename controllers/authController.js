@@ -1,7 +1,7 @@
 const ApiError = require('../utils/errors/ApiError');
 const jwt = require("jsonwebtoken");
-const redisClient = require("../config/redis");
-const bcrypt = require("bcryptjs");                                      
+
+const bcrypt = require("bcryptjs");                                      //
 const asyncHandler = require('express-async-handler');
 const { generateToken } = require("../middleware/authMiddleware");
 const NotificationService = require('../services/NotificationService');
@@ -194,26 +194,7 @@ global.tokenBlacklist = global.tokenBlacklist || new Set();
  * @desc Logout patient and doctor
  * @access public 
  */
-
-
-exports.logout = asyncHandler(async (req, res, next) => {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        return next(new ApiError("Unauthorized: No token provided", 401));
-    }
-
-    const token = authHeader.split(" ")[1];
-
-    try {
-        jwt.verify(token, SECRET_KEY);
-    } catch (error) {
-        return next(new ApiError("Invalid token", 401));
-    }
-
-    global.tokenBlacklist.add(token);
-
-    res.status(200).json({
-        status: "success",
-        message: "You have successfully logged out",
-    });
+//logout -> patient and doctor
+exports.logout = asyncHandler(async (req, res)=>{
+    
 });

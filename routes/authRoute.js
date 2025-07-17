@@ -15,21 +15,17 @@ router
         signupPatient
     )
 
-/**
- * @route POST /api/v1/auth/login
- */
-router
+//login>>>>>>>>>>>>>>>>>>>>>>
+/*router
     .route('/login')
     .post(
         loginValidationRules,
         login
     )
+*/
 
-
-/**
- * @route POST /api/v1/auth/logout
- */
-router
+//logout>>>>>>>>>>>>>>>>>>>>
+/*router
     .route('/logout')
     .post(
         logout
