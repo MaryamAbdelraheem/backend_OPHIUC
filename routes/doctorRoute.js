@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const doctorController = require('../controllers/doctorController');
-const {  } = require('../validators/authValidator');
+const { handlePrediction, handleTreatment, handleFullReport } = require("../controllers/aiController");
+const { } = require('../validators/authValidator');
 const { authenticateToken, authorizeRoles } = require('../middleware/authMiddleware');
 
 
@@ -41,6 +42,38 @@ router
         doctorController.getPatientProfile
     )
 
+// Existing routes
+// AI Routes for Doctor
+/**
+ * @route http://localhost:4000/api/v1/doctors/predict
+ * @access protected
+ */
 
+router.post(
+    "/predict",
+    authenticateToken,
+    authorizeRoles("doctor"),
+    handlePrediction
+);
+/**
+ * @route http://localhost:4000/api/v1/doctors/treatment
+ * @access protected
+ */
 
+router.post(
+    "/treatment",
+    authenticateToken,
+    authorizeRoles("doctor"),
+    handleTreatment
+);
+/**
+ * @route http://localhost:4000/api/v1/doctors/full_report
+ * @access protected
+ */
+router.post(
+    "/full_report",
+    authenticateToken,
+    authorizeRoles("doctor"),
+    handleFullReport
+);
 module.exports = router;
