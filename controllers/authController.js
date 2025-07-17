@@ -185,12 +185,11 @@ exports.login = asyncHandler(async (req, res, next) => {
  * @desc Logout  patient and doctor
  * @access public 
  */
-//logout -> patient and doctor
-exports.logout = asyncHandler(async (req, res) => {
+exports.logout = asyncHandler(async (req, res, next) => {
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        return res.status(401).json({ message: "Unauthorized: No token provided" });
+        return next(new ApiError("Unauthorized: No token provided", 401));
     }
 
     const token = authHeader.split(" ")[1];
@@ -198,7 +197,7 @@ exports.logout = asyncHandler(async (req, res) => {
     // Verify token to get expiry
     const decoded = jwt.decode(token);
     if (!decoded || !decoded.exp) {
-        return res.status(400).json({ message: "Invalid token structure" });
+        return next(new ApiError("Invalid token structure", 400));
     }
 
     const expiryInSeconds = decoded.exp - Math.floor(Date.now() / 1000);

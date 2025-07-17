@@ -17,7 +17,7 @@ exports.getProfile = asyncHandler(async (req, res, next) => {
     });
 
     if (!doctor) {
-        return next(new ApiError("Doctor not found"), 404)
+        return next(new ApiError("Doctor not found", 404))
     }
 
     // 2. إرسال بيانات الطبيب
@@ -46,7 +46,7 @@ exports.getPatients = asyncHandler(async (req, res, next) => {
     });
 
     if (!doctor) {
-        return next(new ApiError("Doctor not found"), 404)
+        return next(new ApiError("Doctor not found", 404))
     }
 
     // 2. الحصول على قائمة المرضى المرتبطين بالطبيب
@@ -56,7 +56,7 @@ exports.getPatients = asyncHandler(async (req, res, next) => {
     });
 
     if (!patients || patients.length === 0) {
-        return next(new ApiError("No patients found for this doctor"), 404)
+        return next(new ApiError("No patients found for this doctor", 404))
      }
 
     // 3. Response Data doctor, patient
@@ -88,7 +88,7 @@ exports.getPatientProfile = asyncHandler(async (req, res, next) => {
     });
 
     if (!doctor) {
-        return next(new ApiError("Doctor not found"), 404)
+        return next(new ApiError("Doctor not found", 404))
 
     }
 
@@ -102,7 +102,7 @@ exports.getPatientProfile = asyncHandler(async (req, res, next) => {
     });
 
     if (!patient) {
-        return next(new ApiError("Patient not found for this doctor"), 404);
+        return next(new ApiError("Patient not found for this doctor", 404));
     }
 
     // 3. إرسال بيانات الطبيب والمريض

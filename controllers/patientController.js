@@ -1,5 +1,4 @@
 const ApiError = require('../utils/errors/ApiError');
-const bcrypt = require("bcryptjs");
 const { Patient } = require("../models");
 const asyncHandler = require('express-async-handler');
 
@@ -31,18 +30,18 @@ exports.updateProfile = asyncHandler(async (req, res, next) => {
         return next(new ApiError("Patient not found", 404))
     }
 
-    // 2. تحديث الحقول فقط إذا تم إرسالها
+    // Update fields only if submitted
     if (firstName) patient.firstName = firstName;
     if (lastName) patient.lastName = lastName;
     if (email) patient.email = email;
-    if (password) patient.password = password; // هيتعملها hash في الـ model hook
+    if (password) patient.password = password; 
     if (height) patient.height = height;
     if (weight) patient.weight = weight;
     if (gender !== undefined) {
         const genderMap = { 0: "Male", 1: "Female" };
         const genderString = genderMap[gender];
         if (!genderString) {
-            return res.status(400).json({ message: "Invalid gender value" });
+            return next(new ApiError("Invalid gender value", 400));
         }
         patient.gender = genderString;
     }
@@ -51,10 +50,10 @@ exports.updateProfile = asyncHandler(async (req, res, next) => {
     if (age) patient.age = age;
     if (img) patient.img = img;
 
-    // 3. حفظ التحديثات
+    // Save any ubdates
     await patient.save();
 
-    // 4. إزالة الباسورد من الـ response
+    // Exclude password  from response
     const patientData = patient.toJSON();
     delete patientData.password;
 
@@ -78,14 +77,13 @@ exports.getProfile = asyncHandler(async (req, res, next) => {
 
     // 1. التحقق من وجود المريض
     const patient = await Patient.findByPk(patientId, {
-        attributes: { exclude: ['password'] } // استثناء كلمة السر من النتيجة
+        attributes: { exclude: ['password'] }
     });
 
     if (!patient) {
         return next(new ApiError("Patient not found", 404))
     }
 
-    // 2. إرسال بيانات المريض
     res.status(200).json({
         status: 'success',
         message: "Patient profile fetched successfully",
