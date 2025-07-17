@@ -1,7 +1,4 @@
-////////////////////////////////////////
-// ======================
 // Core & External Modules
-// ======================
 const express = require("express");
 const http = require("http"); // Core module
 const cors = require("cors");
@@ -12,9 +9,8 @@ dotenv.config();
 const sequelize = require("./utils/database");
 require("./models/associationsModel"); // العلاقات بين الموديلات
 
-//const { getAdminByEmail } = require("./models/adminModel");
-//const { generateToken, authenticateToken } = require("./middleware/authMiddleware");
 const { globalErrorHandler, notFoundHandler } = require("./middleware/errorMiddleware");
+
 
 // Routes
 const authRoutes = require('./routes/authRoute');
@@ -24,14 +20,13 @@ const patientRoutes = require("./routes/patientRoute");
 const appointmentRoutes = require("./routes/appointmentRoute");
 const notificationRoutes = require("./routes/notificationRoute");
 const vitalsRoutes = require("./routes/vitalsRoute");
-const aiRoutes = require("./routes/aiRoute");
 
 // Express App Setup
 const app = express();
 
 app.use(cors({
-  origin: "*", 
-  //write you url in origin
+  origin: "*",
+  // Allow all origins (change to specific domain in production)
   credentials: true,
 }));
 app.use(express.json());
@@ -45,7 +40,6 @@ app.use("/api/v1/patients", patientRoutes);
 app.use("/api/v1/appointments", appointmentRoutes);
 app.use("/api/v1/notifications", notificationRoutes);
 app.use("/api/v1/vitals", vitalsRoutes);
-app.use("/api/v1/ai", aiRoutes);
 
 // Error Handling
 app.use(notFoundHandler);
