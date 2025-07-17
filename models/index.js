@@ -1,8 +1,8 @@
 //  تقوم باستدعاء associations.js لتهيئة العلاقات بعد تحميل
 
 const { DataTypes } = require('sequelize');
-const config = require('../config/config');
-const sequelize = require('../utils/database')
+const sequelize = require('../config/database');
+// const sequelize = require('../utils/database')
 
 const Doctor = require('./doctorModel')(sequelize, DataTypes);
 const Patient = require('./patientModel')(sequelize, DataTypes);

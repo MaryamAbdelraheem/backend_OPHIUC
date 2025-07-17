@@ -6,7 +6,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 // Internal Modules
-const sequelize = require("./utils/database");
+const sequelize = require("./config/database");
 require("./models/associationsModel"); // العلاقات بين الموديلات
 
 const { globalErrorHandler, notFoundHandler } = require("./middleware/errorMiddleware");
