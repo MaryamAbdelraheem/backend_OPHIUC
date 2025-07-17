@@ -1,17 +1,32 @@
 
 const express = require('express');
 const router = express.Router();
-const { loginValidationRules } = require('../validators/authValidator')
-const { authenticateToken, authorizeRoles } = require("../middleware/authMiddleware");
-const { signupPatient, loginAdmin } = require('../controllers/authController');
-// router
-//     .route('/signupPatient')
-//     .post(signupPatient);
+const { signupPatientValidationRules , loginValidationRules } = require('../validators/authValidator')
+const { signupPatient, login } = require('../controllers/authController');
 
+
+//signup patient>>>>>>>>>>>>>>
 router
-    .route('/loginAdmin')
+    .route('/signupPatient')
+    .post(
+        signupPatientValidationRules(),
+        signupPatient
+    )
+
+//login>>>>>>>>>>>>>>>>>>>>>>
+/*router
+    .route('/login')
     .post(
         loginValidationRules(),
-        loginAdmin
-    );
+        login
+    )
+*/
+
+//logout>>>>>>>>>>>>>>>>>>>>
+/*router
+    .route('/logout')
+    .post(
+
+    )
+*/
 module.exports = router;

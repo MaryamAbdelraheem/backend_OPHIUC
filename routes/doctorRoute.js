@@ -7,31 +7,9 @@ const { validateRequest } = require('../middleware/validateRequest');
 const { authenticateToken, authorizeRoles } = require('../middleware/authMiddleware');
 
 // Public routes
-/**
- * @route /api/doctor/login
- * @access public
- */
-router
-    .route('/login')
-    .post(
-        loginValidationRules(),
-        validateRequest,
-        authDoctorController.login
-    )
 
 
 // Protected routes - require doctor role
-/**
- * @route /api/doctor/logout
- * @access protected
- */
-router
-    .route('/logout')
-    .post(
-        authenticateToken,
-        authorizeRoles('doctor'),
-        authDoctorController.logout
-    )
 
 /**
  * @route /api/doctor/:id
