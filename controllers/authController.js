@@ -1,7 +1,7 @@
 const ApiError = require('../utils/errors/ApiError');
 const jwt = require("jsonwebtoken");
 const redisClient = require('../config/redisClient');
-const bcrypt = require("bcryptjs");                                      //
+const bcrypt = require("bcryptjs");
 const asyncHandler = require('express-async-handler');
 const { generateToken } = require("../middleware/authMiddleware");
 const NotificationService = require('../services/NotificationService');
@@ -21,12 +21,6 @@ const STATIC_ADMIN = {
 };
 
 
-/**
- * @method POST
- * @route /api/v1/auth/signupPatient
- * @desc Signup a patient
- * @access public 
- */
 exports.signupPatient = asyncHandler(async (req, res, next) => {
     const {
         firstName,
@@ -40,7 +34,6 @@ exports.signupPatient = asyncHandler(async (req, res, next) => {
         doctorId
     } = req.body;
 
-    // Validate doctor exists
     if (doctorId) {
         const doctor = await Doctor.findByPk(doctorId);
         if (!doctor) {
@@ -54,28 +47,30 @@ exports.signupPatient = asyncHandler(async (req, res, next) => {
     };
 
     const genderString = genderMap[gender];
-
     if (!genderString) {
         return next(new ApiError("Invalid gender value", 400));
     }
 
-    // Check if email is already used
     const existingPatient = await Patient.findOne({ where: { email } });
     if (existingPatient) {
         return next(new ApiError("Email already registered", 400));
     }
 
-    // Create new patient
+    // ✅ تشفير كلمة المرور
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // ✅ إنشاء المريض بكلمة المرور المشفرة
     const patient = await Patient.create({
         firstName,
         lastName,
         email,
-        password,
+        password: hashedPassword,
         height,
         weight,
         gender: genderString,
         age,
-        doctorId 
+        doctorId
     });
 
     await NotificationService.send({
@@ -87,10 +82,9 @@ exports.signupPatient = asyncHandler(async (req, res, next) => {
         delivery_method: 'IN_APP',
         patientId: patient.patientId,
         doctorId: doctorId || null,
-        appointmentId: null         
+        appointmentId: null
     });
 
-    // Generate token
     const token = generateToken(patient, "patient");
 
     res.status(201).json({

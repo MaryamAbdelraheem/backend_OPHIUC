@@ -1,12 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const patientController = require("../controllers/patientController");
-const { loginValidationRules } = require("../validators/authValidator");
-const {validateRequest} = require("../middleware/validateRequest");
+const { } = require("../validators/authValidator");
 const { authenticateToken, authorizeRoles } = require("../middleware/authMiddleware");
-const authPatientController = require('../controllers/authPatientController');
-
-// Protected routes - require patient role
 
 //
 /**
