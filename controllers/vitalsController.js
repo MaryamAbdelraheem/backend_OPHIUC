@@ -1,4 +1,4 @@
-// controllers/vitalsController.js
+const ApiError = require('../utils/errors/ApiError');
 const asyncHandler = require("express-async-handler");
 const Vitals = require("../models/vitalsModel");
 const Device = require("../models/deviceModel");
@@ -9,36 +9,37 @@ const Patient = require("../models/patientModel");
  * @route POST /api/vitals/average
  * @access Protected (called internally by backend)
  */
-exports.handleAverageVitals = asyncHandler(async (req, res) => {
-  const { device_id, ...averageVitals } = req.body;
+exports.handleAverageVitals = asyncHandler(async (req, res, next) => {
+  const { deviceId, ...averageVitals } = req.body;
 
-  if (!device_id) {
-    return res.status(400).json({ message: "device_id is required" });
+  if (!deviceId) {
+    return next(new ApiError("deviceId is required", 400)); // لما نعمل فاليديشن مش هنحتاج السطر دا 
   }
 
   // Find device
-  const device = await Device.findOne({ device_id });
+  const device = await Device.findOne({ where: { deviceId } });
   if (!device) {
-    return res.status(404).json({ message: "Device not found" });
+    return next(new ApiError("Device not found", 404));
   }
 
   // Find patient assigned to the device
-  const patient = await Patient.findById(device.patient_id);
+  const patient = await Patient.findByPk(device.patientId);
   if (!patient) {
-    return res.status(404).json({ message: "Patient not found" });
+    return next(new ApiError("Patient not found", 404));
   }
 
   // Save vitals
   const vitals = await Vitals.create({
-    patient_id: patient._id,
+    patientId: patient.patientId,
+    deviceId: device.deviceId,
     ...averageVitals,
-    timestamp: new Date(),
-    source: "device",
   });
 
   res.status(201).json({
     status: "success",
     message: "Average vitals saved successfully",
-    data: vitals,
+    data: {
+      vitals,
+    },
   });
 });

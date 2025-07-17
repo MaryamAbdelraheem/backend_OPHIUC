@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
   });
 
 
-  return Device; // تصدير النموذج مرة واحدة
+  return Device;
 };
 
 

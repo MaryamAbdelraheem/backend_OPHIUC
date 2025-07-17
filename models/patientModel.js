@@ -1,4 +1,3 @@
-const bcrypt = require('bcryptjs');
 module.exports = (sequelize, DataTypes) => {
     const Patient = sequelize.define('Patient', {
         patientId: {
@@ -42,7 +41,7 @@ module.exports = (sequelize, DataTypes) => {
         age: {
             type: DataTypes.INTEGER,
             allowNull: true
-        },//
+        },
         height: {
             type: DataTypes.FLOAT,
             allowNull: false
@@ -65,5 +64,5 @@ module.exports = (sequelize, DataTypes) => {
         tableName: 'patients'
     });
 
-    return Patient; // تصدير النموذج مرة واحدة فقط
+    return Patient; 
 };

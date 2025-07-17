@@ -49,7 +49,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: true
         },
-        // ✅ المفاتيح الخارجية
+        // FK
         patientId: {
             type: DataTypes.INTEGER,
             allowNull: false,
