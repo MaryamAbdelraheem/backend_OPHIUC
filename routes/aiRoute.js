@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const aiController = require("../controllers/aiController");
+const { handlePrediction, handleTreatment, handleReport, handleFullReport} = require("../controllers/aiController");
 const { authenticateToken, authorizeRoles } = require("../middleware/authMiddleware");
 
 
@@ -14,7 +14,7 @@ router
     .post(
         authenticateToken,
         authorizeRoles("doctor", "patient"),
-        aiController.handlePrediction
+        handlePrediction
     )
 
 /**
@@ -26,7 +26,7 @@ router
     .post(
         authenticateToken, 
         authorizeRoles("doctor", "patient"),
-        aiController.handleTreatment
+        handleTreatment
     )
 
 /**
@@ -38,7 +38,7 @@ router
     .post(
         authenticateToken, 
         authorizeRoles("patient"),
-        aiController.handleReport
+        handleReport
     )
  
 
@@ -51,7 +51,7 @@ router
     .post(
         authenticateToken, 
         authorizeRoles("doctor"),
-        aiController.handleFullReport
+        handleFullReport
     )
 
 
