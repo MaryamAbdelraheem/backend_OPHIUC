@@ -1,7 +1,5 @@
 const ApiError = require('../utils/errors/ApiError');
 const jwt = require("jsonwebtoken");
-const redisClient = require("../config/redisClient");
-
 
 const bcrypt = require("bcryptjs");                                      //
 const asyncHandler = require('express-async-handler');
@@ -186,6 +184,7 @@ exports.login = asyncHandler(async (req, res, next) => {
     return next(new ApiError("Invalid credentials", 401));
 });
 
+
 /**
  * @method POST
  * @route /api/v1/auth/logout
@@ -194,27 +193,27 @@ exports.login = asyncHandler(async (req, res, next) => {
  */
 //logout -> patient and doctor
 exports.logout = asyncHandler(async (req, res) => {
-  const authHeader = req.headers.authorization;
+    const authHeader = req.headers.authorization;
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ message: "Unauthorized: No token provided" });
-  }
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        return res.status(401).json({ message: "Unauthorized: No token provided" });
+    }
 
-  const token = authHeader.split(" ")[1];
+    const token = authHeader.split(" ")[1];
 
-  // Verify token to get expiry
-  const decoded = jwt.decode(token);
-  if (!decoded || !decoded.exp) {
-    return res.status(400).json({ message: "Invalid token structure" });
-  }
+    // Verify token to get expiry
+    const decoded = jwt.decode(token);
+    if (!decoded || !decoded.exp) {
+        return res.status(400).json({ message: "Invalid token structure" });
+    }
 
-  const expiryInSeconds = decoded.exp - Math.floor(Date.now() / 1000);
+    const expiryInSeconds = decoded.exp - Math.floor(Date.now() / 1000);
 
-  // Blacklist the token in Redis with expiry time
-  await redisClient.set(`blacklist:${token}`, "true", "EX", expiryInSeconds);
+    // Blacklist the token in Redis with expiry time
+    await redisClient.set(`blacklist:${token}`, "true", "EX", expiryInSeconds);
 
-  res.status(200).json({
-    status: "success",
-    message: "You have successfully logged out",
-  });
+    res.status(200).json({
+        status: "success",
+        message: "You have successfully logged out",
+    });
 });
