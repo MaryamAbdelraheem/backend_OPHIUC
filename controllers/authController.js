@@ -185,16 +185,35 @@ exports.login = asyncHandler(async (req, res, next) => {
 });
 
 
-
-
-global.tokenBlacklist = global.tokenBlacklist || new Set();
 /**
  * @method POST
  * @route /api/v1/auth/logout
- * @desc Logout patient and doctor
+ * @desc Logout  patient and doctor
  * @access public 
  */
 //logout -> patient and doctor
-exports.logout = asyncHandler(async (req, res)=>{
-    
+exports.logout = asyncHandler(async (req, res) => {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        return res.status(401).json({ message: "Unauthorized: No token provided" });
+    }
+
+    const token = authHeader.split(" ")[1];
+
+    // Verify token to get expiry
+    const decoded = jwt.decode(token);
+    if (!decoded || !decoded.exp) {
+        return res.status(400).json({ message: "Invalid token structure" });
+    }
+
+    const expiryInSeconds = decoded.exp - Math.floor(Date.now() / 1000);
+
+    // Blacklist the token in Redis with expiry time
+    await redisClient.set(`blacklist:${token}`, "true", "EX", expiryInSeconds);
+
+    res.status(200).json({
+        status: "success",
+        message: "You have successfully logged out",
+    });
 });
