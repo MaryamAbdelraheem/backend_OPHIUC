@@ -1,5 +1,3 @@
-const bcrypt = require('bcryptjs');
-
 module.exports = (sequelize, DataTypes) => {
     const Doctor = sequelize.define('Doctor', {
         doctorId: {
@@ -50,5 +48,5 @@ module.exports = (sequelize, DataTypes) => {
     });
 
 
-    return Doctor; // تصدير النموذج مرة واحدة
+    return Doctor;
 };
