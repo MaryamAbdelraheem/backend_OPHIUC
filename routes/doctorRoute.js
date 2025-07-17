@@ -7,7 +7,7 @@ const { authenticateToken, authorizeRoles } = require('../middleware/authMiddlew
 
 
 /**
- * @route /api/doctor/:id
+ * @route /api/v1/doctors/:id
  * @access protected
  */
 router
@@ -19,7 +19,7 @@ router
     )
 
 /**
- * @route /api/doctor/:id/patients
+ * @route /api/v1/doctors/:id/patients
  * @access protected
  */
 router
@@ -31,7 +31,7 @@ router
     )
 
 /**
- * @route /api/doctor/:doctorId/patients/:patientId
+ * @route /api/v1/doctors/:doctorId/patients/:patientId
  * @access protected
  */
 router
