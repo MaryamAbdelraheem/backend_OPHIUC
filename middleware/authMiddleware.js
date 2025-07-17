@@ -1,3 +1,4 @@
+const ApiError = require('../utils/errors/ApiError');
 const jwt = require("jsonwebtoken");
 require("dotenv").config(); // Load env variables
 const redisClient = require("../config/redisClient");
@@ -10,24 +11,24 @@ async function authenticateToken(req, res, next) {
   const token = authHeader && authHeader.split(" ")[1];
 
   if (!token) {
-    return res.status(401).json({ message: "Unauthorized: No token provided" });
+    return next(new ApiError("Unauthorized: No token provided", 401));
   }
 
   // Check if token is blacklisted in Redis
   try {
     const isBlacklisted = await redisClient.get(`blacklist:${token}`);
     if (isBlacklisted) {
-      return res.status(401).json({ message: "Token has been revoked" });
+      return next(new ApiError("Token has been revoked", 401));
     }
   } catch (err) {
     console.error("Redis error:", err);
-    return res.status(500).json({ message: "Internal server error" });
+    return next(new ApiError("Internal server error", 500));
   }
 
   // Verify token
   jwt.verify(token, SECRET_KEY, (err, decoded) => {
     if (err) {
-      return res.status(403).json({ message: "Forbidden: Invalid token" });
+      return next(new ApiError("Forbidden: Invalid token", 403));
     }
 
     req.user = decoded; // Attach user info to request
@@ -40,7 +41,7 @@ async function authenticateToken(req, res, next) {
 function authorizeRoles(...allowedRoles) {
   return (req, res, next) => {
     if (!req.user) {
-      return res.status(401).json({ message: "Unauthorized: No user found" });
+      return next(new ApiError("Unauthorized: No user found", 401));
     }
 
 
