@@ -40,10 +40,6 @@ exports.signupPatient = asyncHandler(async (req, res, next) => {
         doctorId
     } = req.body;
 
-    if (!firstName || !lastName || !email || !password || !height || !weight || !gender) {
-        return next(new ApiError("All required fields must be provided", 400));
-    }
-
     // Validate doctor exists
     if (doctorId) {
         const doctor = await Doctor.findByPk(doctorId);

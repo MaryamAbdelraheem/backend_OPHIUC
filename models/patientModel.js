@@ -1,5 +1,4 @@
 const bcrypt = require('bcryptjs');
-
 module.exports = (sequelize, DataTypes) => {
     const Patient = sequelize.define('Patient', {
         patientId: {
@@ -11,6 +10,7 @@ module.exports = (sequelize, DataTypes) => {
         firstName: {
             type: DataTypes.STRING,
             allowNull: false
+            
         },
         lastName: {
             type: DataTypes.STRING,
