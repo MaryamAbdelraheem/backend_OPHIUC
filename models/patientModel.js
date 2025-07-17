@@ -65,14 +65,5 @@ module.exports = (sequelize, DataTypes) => {
         tableName: 'patients'
     });
 
-
-    // تشفير كلمة المرور قبل الحفظ
-    Patient.beforeCreate(async (patient) => {
-        if (patient.password) {
-            const salt = await bcrypt.genSalt(10);
-            patient.password = await bcrypt.hash(patient.password, salt);
-        }
-    });
-
     return Patient; // تصدير النموذج مرة واحدة فقط
 };

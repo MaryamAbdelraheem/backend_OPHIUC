@@ -1,15 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const doctorController = require('../controllers/doctorController');
-const authDoctorController = require('../controllers/authDoctorController');
-const { loginValidationRules } = require('../validators/authValidator');
-const { validateRequest } = require('../middleware/validateRequest');
+const {  } = require('../validators/authValidator');
 const { authenticateToken, authorizeRoles } = require('../middleware/authMiddleware');
 
-// Public routes
-
-
-// Protected routes - require doctor role
 
 /**
  * @route /api/doctor/:id

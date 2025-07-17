@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const adminController = require('../controllers/adminController');
-const { loginValidationRules } = require('../validators/authValidator');
-const { validateRequest } = require('../middleware/validateRequest');//POST /api/admin / login
+const {  } = require('../validators/authValidator');
 const { authenticateToken, generateToken, authorizeRoles } = require("../middleware/authMiddleware");
 
 
