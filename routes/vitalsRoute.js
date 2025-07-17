@@ -7,7 +7,7 @@ const { vitalsRateLimiter } = require("../middleware/rateLimiter");
 
 
 /**
- * @route POST /api/vitals/average
+ * @route POST /api/v1/vitals/average
  * @access protected (patient & doctor)
  */
 router

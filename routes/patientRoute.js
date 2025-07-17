@@ -7,7 +7,7 @@ const { authenticateToken, authorizeRoles } = require("../middleware/authMiddlew
 
 //
 /**
- * @route /api/patient/:id
+ * @route /api/v1/patients/:id
  * @access Protected 
  */
 router

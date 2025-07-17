@@ -7,11 +7,8 @@ const { authenticateToken, authorizeRoles } = require('../middleware/authMiddlew
 //لما الفلاتر يطلب 
 //GET /api/notifications/ لازم يحط التوكن في الهيدر.
 
-
-
-
 /**
- * @route   GET /api/notifications/
+ * @route   GET /api/v1/notifications
  * @desc    Get notifications for the currently logged-in user
  * @access  Protected
  */
@@ -24,7 +21,7 @@ router
     );
 
 /**
- * @route   PATCH /api/notifications/:id/seen
+ * @route   PATCH /api/v1/notifications/:id/seen
  * @desc    Mark a specific notification as seen
  * @access  Protected
  */
