@@ -44,11 +44,8 @@ function authorizeRoles(...allowedRoles) {
       return next(new ApiError("Unauthorized: No user found", 401));
     }
 
-
     if (!allowedRoles.includes(req.user.role)) {
-      return res.status(403).json({
-        message: `Forbidden: Access denied. Required role: ${allowedRoles.join(", ")}`
-      });
+      return next(new ApiError(`Forbidden: Access denied. Required role: ${allowedRoles.join(", ")}`, 403));
     }
 
     next();
