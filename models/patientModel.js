@@ -56,15 +56,6 @@ module.exports = (sequelize, DataTypes) => {
     gender: {
       type: DataTypes.ENUM('Male', 'Female'),
       allowNull: true
-    },
-    provider: {
-      type: DataTypes.ENUM('manual', 'google'),
-      allowNull: false,
-      defaultValue: 'manual'
-    },
-    isComplete: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false
     }
   }, {
     timestamps: true,
