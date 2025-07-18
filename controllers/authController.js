@@ -20,7 +20,10 @@ const STATIC_ADMIN = {
     role: "admin",
 };
 
-
+/**
+ * @method POST
+ * @route /api/v1/auth/signup
+ */
 exports.signupPatient = asyncHandler(async (req, res, next) => {
     const {
         firstName,
@@ -70,7 +73,9 @@ exports.signupPatient = asyncHandler(async (req, res, next) => {
         weight,
         gender: genderString,
         age,
-        doctorId
+        doctorId,
+        isComplete: true, 
+        provider: 'manual'
     });
 
     await NotificationService.send({
@@ -108,8 +113,6 @@ exports.signupPatient = asyncHandler(async (req, res, next) => {
 /**
  * @method POST
  * @route /api/v1/auth/login
- * @desc Login  patient , doctor and admin
- * @access public 
  */
 //
 exports.login = asyncHandler(async (req, res, next) => {
@@ -178,12 +181,73 @@ exports.login = asyncHandler(async (req, res, next) => {
     return next(new ApiError("Invalid credentials", 401));
 });
 
+/**
+ * @method POST
+ * @route /api/v1/auth/googleCallback
+ */
+exports.googleCallback = asyncHandler(async (req, res, next) => {
+  const { token: googleToken } = req.user;
+  if (!googleToken) return next(new ApiError("Token is required", 400));
+
+  const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+  const ticket = await client.verifyIdToken({
+    idToken: googleToken,
+    audience: process.env.GOOGLE_CLIENT_ID
+  });
+
+  const payload = ticket.getPayload();
+  const { email, given_name, family_name } = payload;
+
+  let patient = await Patient.findOne({ where: { email } });
+
+  if (!patient) {
+    patient = await Patient.create({
+      email,
+      firstName: given_name,
+      lastName: family_name,
+      provider: 'google',
+      isComplete: false
+    });
+  }
+
+  const token = generateToken(patient, 'patient');
+
+  res.redirect(`http://localhost:5500/frontend.html?token=${token}`);
+});
+
+/**
+ * @method PUT 
+ * @route /api/v1/auth/complete
+ */
+// Complete profile after Google signup
+exports.completeProfile = asyncHandler(async (req, res) => {
+  const patientId = req.user.id;
+  const {
+    height,
+    weight,
+    gender,
+    age,
+    doctorId,
+  } = req.body;
+
+  const patient = await Patient.findByPk(patientId);
+  if (!patient) return res.status(404).json({ message: 'Patient not found' });
+
+  patient.height = height;
+  patient.weight = weight;
+  patient.gender = gender;
+  patient.age = age;
+  patient.doctorId = doctorId;
+  patient.isComplete = true;
+
+  await patient.save();
+
+  res.status(200).json({ message: 'Profile completed successfully', patient });
+});
 
 /**
  * @method POST
  * @route /api/v1/auth/logout
- * @desc Logout  patient and doctor
- * @access public 
  */
 exports.logout = asyncHandler(async (req, res, next) => {
     const authHeader = req.headers.authorization;
@@ -210,3 +274,4 @@ exports.logout = asyncHandler(async (req, res, next) => {
         message: "You have successfully logged out",
     });
 });
+

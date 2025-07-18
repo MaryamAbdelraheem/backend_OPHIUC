@@ -1,68 +1,76 @@
 module.exports = (sequelize, DataTypes) => {
-    const Patient = sequelize.define('Patient', {
-        patientId: {
-            type: DataTypes.INTEGER,
-            primaryKey: true,
-            autoIncrement: true,
-            allowNull: false
-        },
-        firstName: {
-            type: DataTypes.STRING,
-            allowNull: false
-            
-        },
-        lastName: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        password: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            validate: {
-                len: [8, 100]
-            }
-        },
-        email: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            unique: true,
-            validate: {
-                isEmail: true
-            }
-        },
-        phoneNumber: {
-            type: DataTypes.STRING,
-            allowNull: true
-        },
-        medicalHistory: {
-            type: DataTypes.TEXT,
-            allowNull: true
-        },
-        age: {
-            type: DataTypes.INTEGER,
-            allowNull: true
-        },
-        height: {
-            type: DataTypes.FLOAT,
-            allowNull: false
-        },
-        weight: {
-            type: DataTypes.FLOAT,
-            allowNull: false
-        },
-        img: {
-            type: DataTypes.STRING,
-            allowNull: true,
-        },
-        gender: {
-            type: DataTypes.ENUM('Male', 'Female'),
-            allowNull: true
-        }
-    }, {
-        timestamps: true,
-        paranoid: true,
-        tableName: 'patients'
-    });
+  const Patient = sequelize.define('Patient', {
+    patientId: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+      allowNull: false
+    },
+    firstName: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    lastName: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        len: [8, 100]
+      }
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+      validate: {
+        isEmail: true
+      }
+    },
+    phoneNumber: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    medicalHistory: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
+    age: {
+      type: DataTypes.INTEGER,
+      allowNull: true
+    },
+    height: {
+      type: DataTypes.FLOAT,
+      allowNull: false
+    },
+    weight: {
+      type: DataTypes.FLOAT,
+      allowNull: false
+    },
+    img: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    gender: {
+      type: DataTypes.ENUM('Male', 'Female'),
+      allowNull: true
+    },
+    provider: {
+      type: DataTypes.ENUM('manual', 'google'),
+      allowNull: false,
+      defaultValue: 'manual'
+    },
+    isComplete: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    }
+  }, {
+    timestamps: true,
+    paranoid: true,
+    tableName: 'patients'
+  });
 
-    return Patient; 
+  return Patient;
 };

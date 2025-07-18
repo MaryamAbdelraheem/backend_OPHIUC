@@ -1,5 +1,6 @@
 // Core & External Modules
 const express = require("express");
+const path = require('path');
 const http = require("http"); // Core module
 const cors = require("cors");
 const dotenv = require("dotenv");
@@ -8,6 +9,9 @@ dotenv.config();
 // Internal Modules
 const sequelize = require("./config/database");
 require("./models/associationsModel"); // العلاقات بين الموديلات
+const passport = require('passport');
+require('./config/passport'); // ملف إعدادات Google Strategy
+
 
 const { globalErrorHandler, notFoundHandler } = require("./middleware/errorMiddleware");
 
@@ -24,6 +28,11 @@ const vitalsRoutes = require("./routes/vitalsRoute");
 // Express App Setup
 const app = express();
 
+///////>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+app.use(express.static('public'));
+///////>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
 app.use(cors({
   origin: "*",
   // Allow all origins (change to specific domain in production)
@@ -31,6 +40,7 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(passport.initialize());
 
 // API Routes
 app.use("/api/v1/auth", authRoutes);
@@ -40,6 +50,13 @@ app.use("/api/v1/patients", patientRoutes);
 app.use("/api/v1/appointments", appointmentRoutes);
 app.use("/api/v1/notifications", notificationRoutes);
 app.use("/api/v1/vitals", vitalsRoutes);
+
+////////>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+app.get('/frontend', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'frontend.html'));
+});
+///////>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
 
 // Error Handling
 app.use(notFoundHandler);

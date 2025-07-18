@@ -36,7 +36,6 @@ async function authenticateToken(req, res, next) {
   });
 }
 
-
 // Role-based access control middleware
 function authorizeRoles(...allowedRoles) {
   return (req, res, next) => {
@@ -56,9 +55,10 @@ function authorizeRoles(...allowedRoles) {
 // Generate JWT token with role
 function generateToken(user, role) {
   const payload = {
-    id: user.id || user.doctorId || user.patientId,
+    id: user.id || user.doctorId || user.patientId || user.googleId,
     email: user.email,
-    role: role
+    role: role,
+    provider: user.provider || "manual",
   };
 
   return jwt.sign(payload, SECRET_KEY, { expiresIn: "12h" });
