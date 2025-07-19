@@ -4,7 +4,7 @@ const asyncHandler = require('express-async-handler');
 
 /**
  * @method PUT
- * @route /api/patient/:id
+ * @route /api/v1/patients/:id
  * @desc Update patient profile
  * @access public 
  */
@@ -68,14 +68,12 @@ exports.updateProfile = asyncHandler(async (req, res, next) => {
 
 /**
  * @method GET
- * @route /api/patient/:id
+ * @route /api/v1/patients/:id
  * @desc View patient profile
  * @access public 
  */
 exports.getProfile = asyncHandler(async (req, res, next) => {
     const { id: patientId } = req.params;
-
-    // 1. التحقق من وجود المريض
     const patient = await Patient.findByPk(patientId, {
         attributes: { exclude: ['password'] }
     });

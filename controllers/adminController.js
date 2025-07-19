@@ -1,7 +1,7 @@
 const ApiError = require('../utils/errors/ApiError');
 const bcrypt = require('bcryptjs');
 const asyncHandler = require('express-async-handler');
-const { Doctor } = require('../models'); // استيراد موديل الطبيب (في حالة استخدام قاعدة بيانات)
+const { Doctor } = require('../models');
 
 /**
  * @method GET
@@ -14,7 +14,7 @@ exports.viewDoctors = asyncHandler(async (req, res, next) => {
         attributes: { exclude: ['password'] }
     });
 
-    if (!doctors) {
+    if (doctors.length === 0) {
         return next(new ApiError('No doctors found', 404));
     }
 

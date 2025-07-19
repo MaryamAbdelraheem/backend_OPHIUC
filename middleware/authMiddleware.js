@@ -48,17 +48,16 @@ function authorizeRoles(...allowedRoles) {
     }
 
     next();
-    console.log("Role in authorizeRoles:", req.user.role);
   };
 }
 
 // Generate JWT token with role
 function generateToken(user, role) {
+  const userId = user.id ?? user.doctorId ?? user.patientId;
   const payload = {
-    id: user.id || user.doctorId || user.patientId || user.googleId,
+    id: userId,
     email: user.email,
-    role: role,
-    provider: user.provider || "manual",
+    role,
   };
 
   return jwt.sign(payload, SECRET_KEY, { expiresIn: "12h" });

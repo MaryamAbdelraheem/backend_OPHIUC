@@ -1,11 +1,12 @@
+const ApiError = require('../utils/errors/ApiError');
 const { Notification } = require('../models');
 const NotificationService = require('../services/NotificationService');
 const asyncHandler = require('express-async-handler')
 /**
  * @method POST
- * @route /api/notifications/
+ * @route /api/v1/notifications
  * @desc Create automatic system notification
- * @access Protected (token required)
+ * @access protected (token required)
  */
 exports.createNotification = asyncHandler(async (req, res) => {
 
@@ -21,7 +22,7 @@ exports.createNotification = asyncHandler(async (req, res) => {
 
 /**
  * @method GET
- * @route /api/notifications/
+ * @route /api/v1/notifications
  * @desc Get current user's notifications
  * @access Protected (token required)
  */
@@ -33,7 +34,7 @@ exports.getMyNotifications = asyncHandler(async (req, res) => {
     order: [['createdAt', 'DESC']]
   });
 
-  res.json({
+  res.status(200).json({
     status: 'success',
     data: {
       notifications
@@ -45,9 +46,9 @@ exports.getMyNotifications = asyncHandler(async (req, res) => {
  * @method GET
  * @route /api/notifications/:id
  * @desc Get current user's notification by id
- * @access Protected (token required)
+ * @access protected (token required)
  */
-exports.getNotificationById = asyncHandler(async (req, res) => {
+exports.getNotificationById = asyncHandler(async (req, res, next) => {
   const notificationId = req.params.id;
   const userId = req.user.id; // تأكد إن المستخدم هو اللي له الإشعار
 
@@ -59,13 +60,10 @@ exports.getNotificationById = asyncHandler(async (req, res) => {
   });
 
   if (!notification) {
-    return res.status(404).json({
-      status: 'fail',
-      message: 'Notification not found'
-    });
+    return next(new ApiError('Notification not found', 404));
   }
 
-  res.json({
+  res.status(200).json({
     status: 'success',
     data: {
       notification
@@ -78,21 +76,22 @@ exports.getNotificationById = asyncHandler(async (req, res) => {
 
 /**
  * @method PATCH
- * @route /api/notifications/:id/seen
+ * @route /api/v1/notifications/:id/seen
  * @desc Mark a notification as seen
- * @access Protected (token required)
+ * @access protected (token required)
  */
-exports.markAsSeen = asyncHandler(async (req, res) => {
+exports.markAsSeen = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
   const notification = await Notification.findByPk(id);
 
-  if (!notification)
-    return res.status(404).json({ message: 'Notification not found' });
+  if (!notification) {
+    return next(new ApiError('Notification not found', 404));
+  }
 
   notification.seen = true;
   await notification.save();
 
-  res.json({
+  res.status(200).json({
     status: 'success',
     message: 'Notification marked as seen'
   });
@@ -100,9 +99,9 @@ exports.markAsSeen = asyncHandler(async (req, res) => {
 
 /**
  * @method POST
- * @route /api/notifications/general
+ * @route /api/v1/notifications/general
  * @desc Send a general notification (e.g. greeting, system message)
- * @access Protected (token required)
+ * @access protected (token required)
  */
 exports.sendGeneral = asyncHandler(async (req, res) => {
   const { recipient_id, type = 'GREETING', target_app } = req.body;
@@ -114,6 +113,7 @@ exports.sendGeneral = asyncHandler(async (req, res) => {
     context_id: null,
     target_app
   });
+
   res.status(201).json({
     status: 'success',
     data: {
