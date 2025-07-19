@@ -7,7 +7,7 @@ dotenv.config();
 
 // Internal Modules
 const sequelize = require("./config/database");
-require("./models/associationsModel"); 
+require("./models/associationsModel");
 
 // Error Middleware 
 const { globalErrorHandler, notFoundHandler } = require("./middleware/errorMiddleware");
@@ -18,6 +18,7 @@ const doctorRoutes = require("./routes/doctorRoute");
 const patientRoutes = require("./routes/patientRoute");
 const appointmentRoutes = require("./routes/appointmentRoute");
 const notificationRoutes = require("./routes/notificationRoute");
+const deviceRoutes = require("./routes/deviceRoute");
 const vitalsRoutes = require("./routes/vitalsRoute");
 
 // Express App Setup
@@ -39,6 +40,7 @@ app.use("/api/v1/doctors", doctorRoutes);
 app.use("/api/v1/patients", patientRoutes);
 app.use("/api/v1/appointments", appointmentRoutes);
 app.use("/api/v1/notifications", notificationRoutes);
+app.use("/api/v1/devices", deviceRoutes);
 app.use("/api/v1/vitals", vitalsRoutes);
 
 
