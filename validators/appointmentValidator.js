@@ -1,18 +1,15 @@
-const { body } = require('express-validator');
+const { body, param } = require("express-validator");
 const { validateRequest } = require('../middleware/validateRequest');
 
-exports.appointmentValidationRules = () => [
+exports.createAppointmentValidator = [
     body('patient_id')
-        .notEmpty().withMessage('Patient ID is required')
-        .isInt({ min: 1 }).withMessage('Patient ID must be a valid integer'),
-
+        .isInt({ min: 1 })
+        .withMessage('Patient ID must be a positive integer'),
     body('appointment_date')
-        .notEmpty().withMessage('Appointment date is required')
-        .isISO8601().withMessage('Invalid date format'),
+        .notEmpty()
+        .withMessage('Appointment date is required')
+        .isISO8601()
+        .withMessage('Appointment date must be a valid ISO 8601 date'),
 
-    body('notes')
-        .optional()
-        .isString().withMessage('Notes must be text')
-        .isLength({ max: 1000 }).withMessage('Notes cannot exceed 1000 characters'),
-        validateRequest
-];
+    validateRequest
+]

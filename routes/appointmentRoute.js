@@ -1,29 +1,25 @@
 const express = require('express');
 const router = express.Router();
+const { createAppointmentValidator } = require('../validators/appointmentValidator');
 const { createAppointment, getAllAppointmentsWithDoctorInfo } = require('../controllers/appointmentController');
 const { authenticateToken, authorizeRoles } = require("../middleware/authMiddleware");
-const { appointmentValidationRules } = require('../validators/appointmentValidator');
-
 /**
  * @route GET, POST /api/v1/appointments
  * @access private
  */
+
 router
     .route('/')
     .post(
         authenticateToken,
         authorizeRoles('doctor'),
-        appointmentValidationRules(),
+        createAppointmentValidator,
         createAppointment
     )
     .get(
         authenticateToken,
-        authorizeRoles('doctor' , 'patient'),
+        authorizeRoles('doctor', 'patient'),
         getAllAppointmentsWithDoctorInfo
     );
-    /*.get(
-        authenticateToken,
-        authorizeRoles('admin'),
-        getPatientsForDoctor*/
 
 module.exports = router;

@@ -1,4 +1,5 @@
 const ApiError = require('../utils/errors/ApiError');
+const bcrypt = require("bcryptjs");
 const { Patient } = require("../models");
 const asyncHandler = require('express-async-handler');
 
@@ -8,6 +9,7 @@ const asyncHandler = require('express-async-handler');
  * @desc Update patient profile
  * @access public 
  */
+
 exports.updateProfile = asyncHandler(async (req, res, next) => {
     const { id: patientId } = req.params;
     const {
@@ -24,36 +26,41 @@ exports.updateProfile = asyncHandler(async (req, res, next) => {
         img
     } = req.body;
 
+    if (req.user.id !== Number(patientId)) {
+        return next(new ApiError("Unauthorized access", 403));
+    }
+
     const patient = await Patient.findByPk(patientId);
-
     if (!patient) {
-        return next(new ApiError("Patient not found", 404))
+        return next(new ApiError("Patient not found", 404));
     }
 
-    // Update fields only if submitted
-    if (firstName) patient.firstName = firstName;
-    if (lastName) patient.lastName = lastName;
-    if (email) patient.email = email;
-    if (password) patient.password = password; 
-    if (height) patient.height = height;
-    if (weight) patient.weight = weight;
-    if (gender !== undefined) {
-        const genderMap = { 0: "Male", 1: "Female" };
-        const genderString = genderMap[gender];
-        if (!genderString) {
-            return next(new ApiError("Invalid gender value", 400));
+    const fieldsToUpdate = {
+        firstName,
+        lastName,
+        email,
+        phoneNumber,
+        medicalHistory,
+        age,
+        height,
+        weight,
+        gender,
+        img
+    };
+
+    for (const key in fieldsToUpdate) {
+        if (fieldsToUpdate[key] !== undefined) {
+            patient[key] = fieldsToUpdate[key];
         }
-        patient.gender = genderString;
     }
-    if (phoneNumber) patient.phoneNumber = phoneNumber;
-    if (medicalHistory) patient.medicalHistory = medicalHistory;
-    if (age) patient.age = age;
-    if (img) patient.img = img;
 
-    // Save any ubdates
+    if (password) {
+        const salt = await bcrypt.genSalt(10);
+        patient.password = await bcrypt.hash(password, salt);
+    }
+
     await patient.save();
 
-    // Exclude password  from response
     const patientData = patient.toJSON();
     delete patientData.password;
 
@@ -65,6 +72,7 @@ exports.updateProfile = asyncHandler(async (req, res, next) => {
         }
     });
 });
+
 
 /**
  * @method GET

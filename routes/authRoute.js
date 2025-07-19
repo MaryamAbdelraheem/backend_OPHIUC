@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { signupPatientValidationRules , loginValidationRules } = require('../validators/authValidator')
+const { signupPatientValidator, loginValidator } = require('../validators/authValidator')
 const { signupPatient, login, logout } = require('../controllers/authController');
 const { authorizeRoles, authenticateToken } = require('../middleware/authMiddleware');
 
@@ -11,7 +11,7 @@ const { authorizeRoles, authenticateToken } = require('../middleware/authMiddlew
 router
     .route('/signup')
     .post(
-        signupPatientValidationRules,
+        signupPatientValidator,
         signupPatient
     )
 
@@ -22,7 +22,7 @@ router
 router
     .route('/login')
     .post(
-        loginValidationRules,
+        loginValidator,
         login
     )
 

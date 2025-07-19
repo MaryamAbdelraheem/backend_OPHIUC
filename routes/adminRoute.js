@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const adminController = require('../controllers/adminController');
-const {  } = require('../validators/authValidator');
-const { authenticateToken, generateToken, authorizeRoles } = require("../middleware/authMiddleware");
+const { viewDoctors, addDoctor, deleteDoctor } = require('../controllers/adminController');
+const { addDoctorValidator, deleteDoctorValidator } = require('../validators/adminValidator');
+const { authenticateToken, authorizeRoles } = require("../middleware/authMiddleware");
 
 
 /**
@@ -28,12 +28,13 @@ router
     .get(
         authenticateToken,
         authorizeRoles('admin'),
-        adminController.viewDoctors
+        viewDoctors
     )
     .post(
         authenticateToken,
         authorizeRoles('admin'),
-        adminController.addDoctor
+        addDoctorValidator,
+        addDoctor
     )
 
 /**
@@ -45,7 +46,8 @@ router
     .delete(
         authenticateToken,
         authorizeRoles('admin'),
-        adminController.deleteDoctor
+        deleteDoctorValidator,
+        deleteDoctor
     )
 
 
