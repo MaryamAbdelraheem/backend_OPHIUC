@@ -29,10 +29,6 @@ Notification.belongsTo(Appointment, { foreignKey: 'appointmentId' });
 Patient.hasMany(Device, { foreignKey: 'patientId' });
 Device.belongsTo(Patient, { foreignKey: 'patientId' });
 
-// Device belongs to Doctor
-Doctor.hasMany(Device, { foreignKey: 'doctorId' });
-Device.belongsTo(Doctor, { foreignKey: 'doctorId' });
-
 // Vitals belongs to Patient
 Patient.hasMany(Vitals, { foreignKey: 'patientId' });
 Vitals.belongsTo(Patient, { foreignKey: 'patientId' });
