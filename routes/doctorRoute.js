@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const doctorController = require('../controllers/doctorController');
+const { getProfile, getPatients, getPatientProfile } = require('../controllers/doctorController');
 const { handlePrediction, handleTreatment, handleFullReport } = require("../controllers/aiController");
 const { } = require('../validators/authValidator');
 const { authenticateToken, authorizeRoles } = require('../middleware/authMiddleware');
 
 
 /**
- * @route /api/v1/doctors/:id
+ * @route GET /api/v1/doctors/:id
  * @access protected
  */
 router
@@ -15,11 +15,11 @@ router
     .get(
         authenticateToken,
         authorizeRoles('doctor'),
-        doctorController.getProfile
+        getProfile
     )
 
 /**
- * @route /api/v1/doctors/:id/patients
+ * @route GET /api/v1/doctors/:id/patients
  * @access protected
  */
 router
@@ -27,11 +27,11 @@ router
     .get(
         authenticateToken,
         authorizeRoles('doctor'),
-        doctorController.getPatients
+        getPatients
     )
 
 /**
- * @route /api/v1/doctors/:doctorId/patients/:patientId
+ * @route GET /api/v1/doctors/:doctorId/patients/:patientId
  * @access protected
  */
 router
@@ -39,13 +39,13 @@ router
     .get(
         authenticateToken,
         authorizeRoles('doctor'),
-        doctorController.getPatientProfile
+        getPatientProfile
     )
 
 // Existing routes
 // AI Routes for Doctor
 /**
- * @route http://localhost:4000/api/v1/doctors/predict
+ * @route POST http://localhost:4000/api/v1/doctors/predict
  * @access protected
  */
 
@@ -56,7 +56,7 @@ router.post(
     handlePrediction
 );
 /**
- * @route http://localhost:4000/api/v1/doctors/treatment
+ * @route POST http://localhost:4000/api/v1/doctors/treatment
  * @access protected
  */
 
@@ -67,7 +67,7 @@ router.post(
     handleTreatment
 );
 /**
- * @route http://localhost:4000/api/v1/doctors/full_report
+ * @route POST http://localhost:4000/api/v1/doctors/full_report
  * @access protected
  */
 router.post(

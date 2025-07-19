@@ -5,7 +5,7 @@ const { authenticateToken, authorizeRoles } = require("../middleware/authMiddlew
 const { appointmentValidationRules } = require('../validators/appointmentValidator');
 
 /**
- * @route /api/v1/appointments
+ * @route GET, POST /api/v1/appointments
  * @access private
  */
 router

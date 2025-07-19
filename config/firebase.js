@@ -1,19 +1,16 @@
 // config/firebase.js
 const admin = require("firebase-admin");
 
-let db;
+// مسار ملف الخدمة
+const serviceAccount = require("./osahealthmonitor-firebase-adminsdk-fbsvc-f42e920593.json");
 
+// تأكد من عدم تكرار التهيئة
 if (!admin.apps.length) {
-    const serviceAccount = require('./osahealthmonitor-firebase-adminsdk-fbsvc-f42e920593.json');
-
     admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),
-        databaseURL: "https://osahealthmonitor-default-rtdb.firebaseio.com", // ← خليك على رابط واحد
+        databaseURL: "https://osahealthmonitor-default-rtdb.firebaseio.com",
     });
-
-    db = admin.database();
-} else {
-    db = admin.app().database();
 }
 
-module.exports = db;
+// تصدير قاعدة البيانات مباشرة
+module.exports = admin.database();

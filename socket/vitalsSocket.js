@@ -1,5 +1,5 @@
 const axios = require("axios");
-const db = require("../services/firebaseService");
+const db = require("../config/firebase");
 const Patient = require("../models/patientModel"); // Sequelize model
 
 function registerVitalsHandlers(socket, io) {
