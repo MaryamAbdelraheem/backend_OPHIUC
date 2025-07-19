@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { getProfile, getPatients, getPatientProfile } = require('../controllers/doctorController');
 const { handlePrediction, handleTreatment, handleFullReport } = require("../controllers/aiController");
-const { } = require('../validators/authValidator');
+const { getProfileValidator, getPatientsValidator, getPatientProfileValidator } = require('../validators/doctorValidator');
 const { authenticateToken, authorizeRoles } = require('../middleware/authMiddleware');
 
 
@@ -15,6 +15,7 @@ router
     .get(
         authenticateToken,
         authorizeRoles('doctor'),
+        getProfileValidator,
         getProfile
     )
 
@@ -27,6 +28,7 @@ router
     .get(
         authenticateToken,
         authorizeRoles('doctor'),
+        getPatientsValidator,
         getPatients
     )
 
@@ -39,6 +41,7 @@ router
     .get(
         authenticateToken,
         authorizeRoles('doctor'),
+        getPatientProfileValidator,
         getPatientProfile
     )
 
