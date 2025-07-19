@@ -7,13 +7,10 @@ dotenv.config();
 
 // Internal Modules
 const sequelize = require("./config/database");
-require("./models/associationsModel"); // العلاقات بين الموديلات
+require("./models/associationsModel"); 
 
-
-
+// Error Middleware 
 const { globalErrorHandler, notFoundHandler } = require("./middleware/errorMiddleware");
-
-
 // Routes
 const authRoutes = require('./routes/authRoute');
 const adminRoutes = require("./routes/adminRoute");
