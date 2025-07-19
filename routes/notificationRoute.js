@@ -1,67 +1,67 @@
 const express = require('express');
 const router = express.Router();
-const NotificationController = require('../controllers/NotificationController');
+const { getMyNotifications, markAsSeen, createNotification, sendGeneral, getNotificationById } = require('../controllers/NotificationController');
 const { authenticateToken, authorizeRoles } = require('../middleware/authMiddleware');
-
-//note:
-//لما الفلاتر يطلب 
-//GET /api/notifications/ لازم يحط التوكن في الهيدر.
 
 /**
  * @route   GET /api/v1/notifications
  * @desc    Get notifications for the currently logged-in user
- * @access  Protected
+ * @access  protected
  */
 router
     .route('/')
     .get(
         authenticateToken,
-        authorizeRoles('doctor' , 'patient'),
-        NotificationController.getMyNotifications
+        authorizeRoles('doctor', 'patient'),
+        getMyNotifications
     );
 
 /**
  * @route   PATCH /api/v1/notifications/:id/seen
  * @desc    Mark a specific notification as seen
- * @access  Protected
+ * @access  protected
  */
 router
     .route('/:id/seen')
     .patch(
         authenticateToken,
-        NotificationController.markAsSeen
+        markAsSeen
     );
 
 /**
- * @route   POST /api/notifications/
+ * @route   POST /api/v1/notifications/
  * @desc    Create/send a system-triggered notification (like appointment or vitals)
- * @access  Protected
+ * @access  protected
  */
 router
     .route('/')
     .post(
         authenticateToken,
-        NotificationController.createNotification
+        createNotification
     );
 
 /**
- * @route   POST /api/notifications/general
+ * @route   POST /api/v1/notifications/general
  * @desc    Send general/greeting/system notification (used by system itself)
- * @access  Protected
+ * @access  protected
  */
 router
     .route('/general')
     .post(
         authenticateToken,
         authorizeRoles("patient", 'doctor'),
-        NotificationController.sendGeneral
+        sendGeneral
     );
-
+/**
+ * @route   GET /api/v1/notifications/:id
+ * @desc    Get Notification by id
+ * @access  private
+ */
 router
     .route('/:id')
     .get(
-        authenticateToken
-        ,NotificationController.getNotificationById
+        authenticateToken,
+        getNotificationById
     );
 
 module.exports = router;

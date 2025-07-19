@@ -6,7 +6,7 @@ const { authenticateToken, generateToken, authorizeRoles } = require("../middlew
 
 
 /**
- * @route /api/v1/admin/dashboard
+ * @route GET /api/v1/admin/dashboard
  * @access protected
  */
 router
@@ -20,7 +20,7 @@ router
     )
 
 /**
- * @route /api/v1/admin/users/doctors
+ * @route GET, POST /api/v1/admin/users/doctors
  * @access protected
  */
 router
@@ -37,7 +37,7 @@ router
     )
 
 /**
- * @route /api/v1/admin/users/doctors/:id
+ * @route DELETE /api/v1/admin/users/doctors/:id
  * @access protected
  */
 router
