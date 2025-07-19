@@ -1,4 +1,3 @@
-// utils/errors/globalErrorHandler.js
 const { ValidationError, UniqueConstraintError, DatabaseError } = require('sequelize');
 const ApiError = require('../utils/errors/ApiError');
 

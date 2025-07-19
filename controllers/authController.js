@@ -37,21 +37,9 @@ exports.signupPatient = asyncHandler(async (req, res, next) => {
         doctorId
     } = req.body;
 
-    if (doctorId) {
-        const doctor = await Doctor.findByPk(doctorId);
-        if (!doctor) {
-            return next(new ApiError("Invalid doctor ID", 400));
-        }
-    }
-
-    const genderMap = {
-        0: "Male",
-        1: "Female"
-    };
-
-    const genderString = genderMap[gender];
-    if (!genderString) {
-        return next(new ApiError("Invalid gender value", 400));
+    const doctor = await Doctor.findByPk(doctorId);
+    if (!doctor) {
+        return next(new ApiError("Invalid doctor ID", 400));
     }
 
     const existingPatient = await Patient.findOne({ where: { email } });
@@ -69,11 +57,9 @@ exports.signupPatient = asyncHandler(async (req, res, next) => {
         password: hashedPassword,
         height,
         weight,
-        gender: genderString,
+        gender,
         age,
-        doctorId,
-        isComplete: true, 
-        provider: 'manual'
+        doctorId
     });
 
     await NotificationService.send({
@@ -115,11 +101,7 @@ exports.signupPatient = asyncHandler(async (req, res, next) => {
 //
 exports.login = asyncHandler(async (req, res, next) => {
     const { email, password } = req.body;
-
-    if (!email || !password) {
-        return next(new ApiError("Please provide email and password", 400));
-    }
-
+    
     // Check if Admin
     if (email === STATIC_ADMIN.email && password === STATIC_ADMIN.password) {
         const token = jwt.sign(
@@ -184,15 +166,8 @@ exports.login = asyncHandler(async (req, res, next) => {
  * @route /api/v1/auth/logout
  */
 exports.logout = asyncHandler(async (req, res, next) => {
-    const authHeader = req.headers.authorization;
+    const token = req.token;
 
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        return next(new ApiError("Unauthorized: No token provided", 401));
-    }
-
-    const token = authHeader.split(" ")[1];
-
-    // Verify token to get expiry
     const decoded = jwt.decode(token);
     if (!decoded || !decoded.exp) {
         return next(new ApiError("Invalid token structure", 400));
@@ -200,7 +175,6 @@ exports.logout = asyncHandler(async (req, res, next) => {
 
     const expiryInSeconds = decoded.exp - Math.floor(Date.now() / 1000);
 
-    // Blacklist the token in Redis with expiry time
     await redisClient.set(`blacklist:${token}`, "true", "EX", expiryInSeconds);
 
     res.status(200).json({
@@ -208,4 +182,3 @@ exports.logout = asyncHandler(async (req, res, next) => {
         message: "You have successfully logged out",
     });
 });
-

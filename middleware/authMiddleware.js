@@ -1,6 +1,5 @@
 const ApiError = require('../utils/errors/ApiError');
 const jwt = require("jsonwebtoken");
-require("dotenv").config(); // Load env variables
 const redisClient = require("../config/redisClient");
 
 const SECRET_KEY = process.env.SECRET_KEY || "ophiucs-project-secret-jwt"; // Use env variable
@@ -32,6 +31,7 @@ async function authenticateToken(req, res, next) {
     }
 
     req.user = decoded; // Attach user info to request
+    req.token = token;
     next();
   });
 }
