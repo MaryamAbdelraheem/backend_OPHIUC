@@ -2,6 +2,16 @@ const { body } = require('express-validator');
 const { validateRequest } = require("../middleware/validateRequest");
 
 // Signup validation 
+const genderMap = {
+    0: "Male",
+    1: "Female",
+    "0": "Male",
+    "1": "Female",
+    male: "Male",
+    female: "Female",
+    Male: "Male",
+    Female: "Female",
+};
 exports.signupPatientValidationRules = [
     body('firstName')
         .notEmpty().withMessage('First name is required')
@@ -29,14 +39,19 @@ exports.signupPatientValidationRules = [
 
     body('gender')
         .notEmpty().withMessage('Gender is required')
-        .isIn([0, 1]).withMessage('Gender must be 0 (Male) or 1 (Female)'),
-
+        .custom((value) => {
+            if (!genderMap[value]) {
+                throw new Error("Gender must be 0 (Male) or 1 (Female), or 'Male' / 'Female'");
+            }
+            return true;
+        })
+        .customSanitizer(value => genderMap[value]),
     body('age')
-        .optional()
+        .notEmpty().withMessage('Age is required')
         .isInt({ min: 0 }).withMessage('Age must be a positive integer'),
 
     body('doctorId')
-        .optional()
+        .notEmpty().withMessage('DoctorId is required')
         .isInt({ min: 1 }).withMessage('Doctor ID must be a valid integer'),
     validateRequest
 ];

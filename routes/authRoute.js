@@ -1,9 +1,7 @@
-
 const express = require('express');
-const passport = require('passport');
 const router = express.Router();
 const { signupPatientValidationRules , loginValidationRules } = require('../validators/authValidator')
-const { signupPatient, login, logout, googleCallback, completeProfile } = require('../controllers/authController');
+const { signupPatient, login, logout } = require('../controllers/authController');
 const { authorizeRoles, authenticateToken } = require('../middleware/authMiddleware');
 
 
