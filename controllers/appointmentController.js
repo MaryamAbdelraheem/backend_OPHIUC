@@ -1,9 +1,13 @@
 const ApiError = require('../utils/errors/ApiError');
 const { Appointment, Notification, Patient, Doctor } = require("../models");
 const asyncHandler = require("express-async-handler");
-
+/**
+ * @desc Create an appointment for the doctor's patient 
+ * @route POST /api/v1/appointments
+ * @access private (doctors)
+ */
 exports.createAppointment = asyncHandler(async (req, res, next) => {
-  const doctorId = req.user.id; // من التوكن
+  const doctorId = req.user.id; // From token
   const { patient_id, appointment_date, } = req.body;
 
   // Check if the patient exists
@@ -30,7 +34,7 @@ exports.createAppointment = asyncHandler(async (req, res, next) => {
 /**
  * @desc Get all appointments with doctor name, specialty, date and time
  * @route GET /api/v1/appointments
- * @access Private (for authenticated users like doctors or patients)
+ * @access private (for authenticated users like doctors or patients)
  */
 
 exports.getAllAppointmentsWithDoctorInfo = asyncHandler(async (req, res, next) => {
@@ -53,7 +57,7 @@ exports.getAllAppointmentsWithDoctorInfo = asyncHandler(async (req, res, next) =
   }
 
   const formattedAppointments = appointments.map(app => ({
-    doctorName: `${app.Doctor.firstName} ${app.Doctor.lastName}`,
+    doctorName: `Dr. ${app.Doctor.firstName} ${app.Doctor.lastName}`,
     specialization: app.Doctor.specialization,
     date: app.appointment_date.toISOString().split('T')[0],
     time: app.appointment_date.toISOString().split('T')[1].slice(0, 5),

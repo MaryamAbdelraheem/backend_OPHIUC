@@ -9,7 +9,7 @@ const { Doctor, Patient } = require('../models');
 
 const SECRET_KEY = process.env.JWT_SECRET || "ophiucs-project-secret-jwt";
 
-// بيانات الأدمن من .env
+// Admin information From .env
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 
@@ -59,11 +59,9 @@ exports.signupPatient = asyncHandler(async (req, res, next) => {
         return next(new ApiError("Email already registered", 400));
     }
 
-    // ✅ تشفير كلمة المرور
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // ✅ إنشاء المريض بكلمة المرور المشفرة
     const patient = await Patient.create({
         firstName,
         lastName,
@@ -178,7 +176,7 @@ exports.login = asyncHandler(async (req, res, next) => {
         });
     }
 
-    return next(new ApiError("Invalid credentials", 401));
+    return next(new ApiError("Invalid email or password", 401));
 });
 
 /**

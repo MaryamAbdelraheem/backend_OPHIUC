@@ -1,26 +1,25 @@
 const ApiError = require('../utils/errors/ApiError');
-const { Doctor, Patient } = require('../models'); // Ensure Patient is imported
-const asyncHandler = require('express-async-handler'); // استيراد asyncHandler
+const { Doctor, Patient } = require('../models');
+const asyncHandler = require('express-async-handler');
 
 /**
  * @method GET
- * @route /api/doctor/:id
+ * @route /api/v1/doctors/:id
  * @desc View doctor profile
  * @access public 
  */
 exports.getProfile = asyncHandler(async (req, res, next) => {
     const { id: doctorId } = req.params;
 
-    // 1. التحقق من وجود الطبيب
+    // 1. Check the doctor's presence    
     const doctor = await Doctor.findByPk(doctorId, {
-        attributes: { exclude: ['email', 'password', 'createdAt', 'updatedAt', 'deletedAt'] } // استثناء كلمة السر من النتيجة
+        attributes: { exclude: ['email', 'password', 'createdAt', 'updatedAt', 'deletedAt'] }
     });
 
     if (!doctor) {
         return next(new ApiError("Doctor not found", 404))
     }
 
-    // 2. إرسال بيانات الطبيب
     res.status(200).json({
         status: 'success',
         message: "Doctor profile fetched successfully",
@@ -33,14 +32,14 @@ exports.getProfile = asyncHandler(async (req, res, next) => {
 
 /**
  * @method GET
- * @route /api/doctor/:id/patients
+ * @route /api/v1/doctors/:id/patients
  * @desc View doctor patients
- * @access public 
+ * @access private 
  */
 exports.getPatients = asyncHandler(async (req, res, next) => {
-    const { id: doctorId } = req.params; // Get doctorId from URL parameter
+    const { id: doctorId } = req.params;
 
-    // 1. التحقق من وجود الطبيب
+    // 1. Check the doctor's presence
     const doctor = await Doctor.findByPk(doctorId, {
         attributes: ['firstName', 'lastName'] // Fetch only firstName, lastName
     });
@@ -49,15 +48,15 @@ exports.getPatients = asyncHandler(async (req, res, next) => {
         return next(new ApiError("Doctor not found", 404))
     }
 
-    // 2. الحصول على قائمة المرضى المرتبطين بالطبيب
+    // 2. Get a list of patients associated with the doctor
     const patients = await Patient.findAll({
-        where: { doctorId }, // Filter by DoctorDoctorId
-        attributes: ['patientId', 'firstName', 'lastName', 'img'] // Fetch only firstName, lastName, and img for patients
+        where: { doctorId }, // Filter by doctorId
+        attributes: ['patientId', 'firstName', 'lastName', 'email', 'img'] // Fetch only firstName, lastName, email and img for patients
     });
 
     if (!patients || patients.length === 0) {
         return next(new ApiError("No patients found for this doctor", 404))
-     }
+    }
 
     // 3. Response Data doctor, patient
     res.status(200).json({
@@ -73,18 +72,17 @@ exports.getPatients = asyncHandler(async (req, res, next) => {
 
 /**
  * @method GET
- * @route /api/doctor/:doctorId/patients/:patientId
+ * @route /api/v1/doctors/:doctorId/patients/:patientId
  * @desc View patient profile for doctor
- * @access private (عشان لازم يكون في توكن صالح)
+ * @access private
 */
 
-// Display data patient for doctor
 exports.getPatientProfile = asyncHandler(async (req, res, next) => {
-    const { doctorId, patientId } = req.params; // Get doctorId and patientId from URL
+    const { doctorId, patientId } = req.params;
 
-    // 1. التحقق من وجود الطبيب
+    // 1. Check the doctor's presence
     const doctor = await Doctor.findByPk(doctorId, {
-        attributes: ['firstName', 'lastName'] 
+        attributes: ['firstName', 'lastName']
     });
 
     if (!doctor) {
@@ -92,20 +90,20 @@ exports.getPatientProfile = asyncHandler(async (req, res, next) => {
 
     }
 
-    // 2. التحقق من وجود المريض المرتبط بالطبيب
+    // 2. Verify the presence of the patient associated with the doctor
     const patient = await Patient.findOne({
         where: {
             patientId: patientId,
-            doctorId // تأكد أن المريض فعلاً يتبع الطبيب
+            doctorId // Make sure the patient is actually following the doctor.
         },
-        attributes: ['patientId', 'firstName', 'lastName', 'img'] 
+        attributes: ['patientId', 'firstName', 'lastName', 'img']
     });
 
     if (!patient) {
         return next(new ApiError("Patient not found for this doctor", 404));
     }
 
-    // 3. إرسال بيانات الطبيب والمريض
+    // 3. Response Data doctor, patient
     res.status(200).json({
         status: 'success',
         message: "Patient profile fetched successfully",

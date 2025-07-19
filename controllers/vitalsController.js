@@ -6,7 +6,7 @@ const Patient = require("../models/patientModel");
 
 /**
  * @desc Save average vitals for a device (every 30 mins)
- * @route POST /api/vitals/average
+ * @route POST /api/v1/vitals/average
  * @access Protected (called internally by backend)
  */
 exports.handleAverageVitals = asyncHandler(async (req, res, next) => {
