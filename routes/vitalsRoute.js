@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { handleAverageVitals } = require("../controllers/vitalsController");
+const { listenToFirebaseVitals } = require("../controllers/vitalsController");
 const { authenticateToken, authorizeRoles } = require("../middleware/authMiddleware");
 const { vitalsRateLimiter } = require("../middleware/rateLimiter");
 
@@ -15,7 +15,7 @@ router
     authenticateToken,
     authorizeRoles("patient", "doctor"),
     vitalsRateLimiter,
-    handleAverageVitals
+    listenToFirebaseVitals    
   );
 
 module.exports = router;

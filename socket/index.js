@@ -1,6 +1,4 @@
-// منظم ملفات الsocket
 const { Server } = require("socket.io");
-const registerVitalsHandlers = require("./vitalsSocket");
 const registerNotificationHandlers = require("./notificationSocket");
 const socketAuth = require('../middleware/socketAuth');
 
@@ -13,8 +11,11 @@ function initSocket(server) {
     }
   });
 
-  // ✅ JWT authentication middleware
+  // JWT authentication middleware
   io.use(socketAuth);
+
+  // Save io to global object so background tasks can use it
+  global.io = io;
 
   io.on("connection", (socket) => {
     console.log(`Client connected: ${socket.id}`);
@@ -23,8 +24,7 @@ function initSocket(server) {
       console.log(`[${socket.id}] Event: ${event}`, data);
     });
 
-    // Register socket handlers
-    registerVitalsHandlers(socket, io);
+    // ✅ Notification system
     registerNotificationHandlers(socket, io);
 
     socket.on("disconnect", () => {
