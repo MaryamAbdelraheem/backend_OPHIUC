@@ -44,9 +44,9 @@ const flushBufferedVitals = async () => {
                 });
             }
 
-            console.log(`✅ Saved Redis-Buffered vitals for ${serialNumber}`);
+            console.log(`Saved Redis-Buffered vitals for ${serialNumber}`);
         } catch (err) {
-            console.error(`❌ Failed to save vitals for ${serialNumber}:`, err.message);
+            console.error(`Failed to save vitals for ${serialNumber}:`, err.message);
         }
 
         // 🧹 امسح البيانات من Redis بعد التخزين
@@ -56,3 +56,5 @@ const flushBufferedVitals = async () => {
 
 // ⏱ شغّل التفريغ كل 30 دقيقة
 setInterval(flushBufferedVitals, 30 * 60 * 1000);
+
+module.exports = { flushBufferedVitals };
