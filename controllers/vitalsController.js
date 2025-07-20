@@ -1,44 +1,45 @@
-const ApiError = require('../utils/errors/ApiError');
-const asyncHandler = require("express-async-handler");
+const db = require("../config/firebase");
 const { Vitals, Device } = require('../models');
 
 /**
- * @desc Save average vitals for a device (every 30 mins)
- * @route POST /api/v1/vitals/average
- * @access Protected (called internally by backend)
+ * @desc Listen to Firebase Realtime Database and save vitals + emit via WebSocket
  */
-exports.handleAverageVitals = asyncHandler(async (req, res, next) => {
-  const { serialNumber, ...averageVitals } = req.body;
+exports.listenToFirebaseVitals = () => {
+  const vitalsRef = db.ref("vitals"); // المسار في Firebase
 
-  if (!serialNumber) {
-    return next(new ApiError("serialNumber is required", 400));
-  }
+  vitalsRef.on("child_added", async (snapshot) => {
+    const data = snapshot.val();
 
-  // 1. Fetch the device using serialNumber
-  const device = await Device.findOne({ where: { serialNumber } });
+    try {
+      const { serialNumber, ...averageVitals } = data;
 
-  if (!device) {
-    return next(new ApiError("Device not found", 404));
-  }
+      if (!serialNumber) return console.error("Missing serialNumber");
 
-  // 2. Make sure the device is linked to a patient.
-  if (!device.patientId) {
-    return next(new ApiError("Device is not linked to any patient", 400));
-  }
+      // 1. Fetch the device
+      const device = await Device.findOne({ where: { serialNumber } });
+      if (!device || !device.patientId) {
+        return console.error("Device not linked or not found");
+      }
 
-  // 3. Create vitals
-  const vitals = await Vitals.create({
-    patientId: device.patientId,
-    deviceId: device.deviceId,
-    ...averageVitals,
-    source: "device",
+      // 2. Save vitals
+      const vitals = await Vitals.create({
+        patientId: device.patientId,
+        deviceId: device.deviceId,
+        ...averageVitals,
+        source: "device",
+      });
+
+      // 3. Emit via WebSocket
+      if (global.io) {
+        global.io.emit("newVitals", {
+          patientId: device.patientId,
+          vitals,
+        });
+      }
+
+      console.log("Vitals saved and emitted:", vitals.id);
+    } catch (error) {
+      console.error("Error saving vitals:", error.message);
+    }
   });
-
-  res.status(201).json({
-    status: "success",
-    message: "Average vitals saved successfully",
-    data: { 
-      vitals
-     },
-  });
-});
+};
