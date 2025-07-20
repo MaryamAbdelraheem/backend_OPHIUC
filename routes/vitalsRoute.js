@@ -1,12 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const { listenToFirebaseVitals } = require("../controllers/vitalsController");
+const { listenToFirebaseVitals, getLastAveragedVitals } = require("../controllers/vitalsController");
 const { authenticateToken, authorizeRoles } = require("../middleware/authMiddleware");
 const { vitalsRateLimiter } = require("../middleware/rateLimiter");
 
 
 /**
- * @route POST /api/v1/vitals/average
+ * @route POST, GET /api/v1/vitals/average
  * @access protected 
  */
 router
@@ -15,7 +15,15 @@ router
     authenticateToken,
     authorizeRoles("patient", "doctor"),
     vitalsRateLimiter,
-    listenToFirebaseVitals    
-  );
+    listenToFirebaseVitals
+  )
+
+router
+  .route('/last-averaged')
+  .get(
+    authenticateToken,
+    authorizeRoles('patient', 'doctor'),
+    getLastAveragedVitals
+  )
 
 module.exports = router;

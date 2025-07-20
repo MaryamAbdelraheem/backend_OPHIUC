@@ -1,6 +1,7 @@
+const asyncHandler = require('express-async-handler');
+const { Op } = require('sequelize');
 const db = require("../config/firebase");
 const { Vitals, Device } = require('../models');
-
 /**
  * @desc Listen to Firebase Realtime Database and save vitals + emit via WebSocket
  */
@@ -43,3 +44,43 @@ exports.listenToFirebaseVitals = () => {
     }
   });
 };
+
+/**
+ * @desc Retrieves the latest vitals averaged and stored from Redis within the last 30 minutes.
+ *       This endpoint is intended to display the most recent processed device data for monitoring.
+ * @route GET /api/v1/vitals/last-averaged
+ * @access private (patient)
+ * @returns {Object} 200 - JSON response containing an array of vitals records
+ */
+
+exports.getLastAveragedVitals = asyncHandler(async (req, res) => {
+  const THIRTY_MINUTES_AGO = new Date(Date.now() - 30 * 60 * 1000);
+
+  const vitals = await Vitals.findAll({
+    where: {
+      createdAt: {
+        [Op.gte]: THIRTY_MINUTES_AGO
+      }
+    },
+    attributes: [
+      'patientId',
+      'deviceId',
+      'Oxygen_Saturation',
+      'Snoring',
+      'AHI',
+      'BMI',
+      'Age',
+      'Gender',
+      'createdAt'
+    ],
+    order: [['createdAt', 'DESC']]
+  });
+
+  res.status(200).json({
+    status: 'success',
+    results: vitals.length,
+    data: {
+      vitals
+    }
+  });
+});
