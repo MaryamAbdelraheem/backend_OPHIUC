@@ -1,7 +1,6 @@
-// في associations.js
 const { Doctor, Patient, Appointment, Notification, Vitals, Device } = require('.');
 
-// 1 To M with Doctor => Patient
+// 1 To M Doctor => Patient
 Doctor.hasMany(Patient, { foreignKey: 'doctorId' });
 Patient.belongsTo(Doctor, { foreignKey: 'doctorId' });
 
@@ -25,19 +24,31 @@ Notification.belongsTo(Doctor, { foreignKey: 'doctorId' });
 Appointment.hasMany(Notification, { foreignKey: 'appointmentId' });
 Notification.belongsTo(Appointment, { foreignKey: 'appointmentId' });
 
-// Device belongs to Patient
-Patient.hasMany(Device, { foreignKey: 'patientId' });
-Device.belongsTo(Patient, { foreignKey: 'patientId' });
+// 1 To M Patient => Device (مع تعطيل constraints لتفادي الخطأ)
+Patient.hasMany(Device, {
+  foreignKey: {
+    name: 'patientId',
+    allowNull: true,
+  },
+  constraints: false,
+});
+Device.belongsTo(Patient, {
+  foreignKey: {
+    name: 'patientId',
+    allowNull: true,
+  },
+  constraints: false,
+});
 
-// Vitals belongs to Patient
+// 1 To M Patient => Vitals
 Patient.hasMany(Vitals, { foreignKey: 'patientId' });
 Vitals.belongsTo(Patient, { foreignKey: 'patientId' });
 
-// Vitals belongs to Doctor
+// 1 To M Doctor => Vitals
 Doctor.hasMany(Vitals, { foreignKey: 'doctorId' });
 Vitals.belongsTo(Doctor, { foreignKey: 'doctorId' });
 
-// Vitals belongs to Device
+// 1 To M Device => Vitals
 Device.hasMany(Vitals, { foreignKey: 'deviceId' });
 Vitals.belongsTo(Device, { foreignKey: 'deviceId' });
 
