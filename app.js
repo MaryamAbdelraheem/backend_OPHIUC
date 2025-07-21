@@ -6,11 +6,15 @@ const path = require('path');
 const http = require("http"); // Core module
 const cors = require("cors");
 const dotenv = require("dotenv");
+const morgan = require('morgan');
+
 dotenv.config();
 
 // Internal Modules
 const sequelize = require("./config/database");
 require("./models/associationsModel"); // العلاقات بين الموديلات
+
+
 
 
 
@@ -29,6 +33,10 @@ const vitalsRoutes = require("./routes/vitalsRoute");
 // Express App Setup
 const app = express();
 require("./config/swagger")(app)
+if (process.env.NODE_ENV === "development") {
+  app.use(morgan('dev'))
+  console.log(`Mode: ${process.env.NODE_ENV}`);
+}
 
 
 app.use(cors({
