@@ -3,6 +3,7 @@ const express = require("express");
 const http = require("http");
 const cors = require("cors");
 const dotenv = require("dotenv");
+const morgan = require('morgan');
 dotenv.config();
 
 // 2. Config & Database
@@ -38,7 +39,10 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
+if (process.env.NODE_ENV === "development") {
+  app.use(morgan('dev'))
+  console.log(`Mode: ${process.env.NODE_ENV}`);
+}
 // Swagger route
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
