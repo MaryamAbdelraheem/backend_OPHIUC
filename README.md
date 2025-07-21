@@ -146,11 +146,20 @@ MIT License © 2025
 ⸻
 
 📬 Contact
-	•	Developer: Maryam Abdelraheem
-	•	Email: your.email@example.com
-	•	LinkedIn: 
+	•	Developers: 
+    - Maryam Abdelraheem
+    - Fathy Mohammed
 
-⸻
+    •	Teammate Github : https://github.com/fathymhmedx
+
+    •	Email: 
+    - maryamalkhawagh@gmail.com
+    - fathymhmed11@gmail.com
+	
+    •	LinkedIn: 
+    - www.linkedin.com/in/maryam-abdelraheem-54146a256
+    - www.linkedin.com/in/fathymohamed11
+
 
 🩺 Built to empower better breathing and healthier lives.
 
