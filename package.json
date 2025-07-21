@@ -27,7 +27,9 @@
     "passport-google-oauth20": "^2.0.0",
     "redis": "^5.6.0",
     "sequelize": "^6.37.6",
-    "socket.io": "^4.8.1"
+    "socket.io": "^4.8.1",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
