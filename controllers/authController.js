@@ -58,7 +58,14 @@ exports.signupPatient = asyncHandler(async (req, res, next) => {
         message: "Account created",
         data: {
             patientId: patient.patientId,
-            email: patient.email
+            firstName: patient.firstName,
+            lastName: patient.lastName,
+            email: patient.email,
+            height: patient.height,
+            weight: patient.weight,
+            gender: patient.gender,
+            age: patient.age,
+            doctorId: doctorId
         },
         token
     });
