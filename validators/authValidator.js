@@ -3,7 +3,7 @@ const { validateRequest } = require("../middleware/validateRequest");
 const genderMap = require('../utils/genderMap');
 // Signup validation 
 
-exports.signupPatientValidator = [
+exports.signupValidator = [
     body('firstName')
         .notEmpty().withMessage('First name is required')
         .isLength({ min: 2 }).withMessage('First name must be at least 2 characters'),

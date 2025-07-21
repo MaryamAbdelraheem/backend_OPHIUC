@@ -1,0 +1,771 @@
+openapi: 3.0.0
+info:
+  title: OPHIUC 'Medical system' API Documentation
+  version: 1.0.0
+
+tags:
+  - name: Admin
+    description: Admin related endpoints
+  - name: Patients
+    description: Patient related endpoints
+  - name: Doctors
+    description: Doctor related endpoints
+  - name: Auth
+    description: Authentication & Authorization
+  - name: Vitals
+    description: Vitals endpoints
+  - name: Notifications
+    description: Notification endpoints
+  - name: Devices
+    description: Device connection & communication
+  - name: Appointments
+    description: Appointment-related endpoints
+
+paths:
+#admin paths
+  /admin/dashboard:
+    get:
+      tags:
+        - Admin
+      summary: Get admin dashboard data
+      responses:
+        '200':
+          description: Success
+
+  /admin/users/doctors:
+    get:
+      tags:
+        - Admin
+      summary: Get all doctors
+      responses:
+        '200':
+          description: Success
+    post:
+      tags:
+        - Admin
+      summary: Create new doctor
+      responses:
+        '201':
+          description: Created
+
+  /admin/users/doctors/{id}:
+    delete:
+      tags:
+        - Admin
+      summary: Delete a doctor
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Deleted successfully
+
+
+#appointment paths
+  /appointments:
+    post:
+      tags:
+        - Appointments
+      summary: Create a new appointment
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - patient_id
+                - appointment_date
+              properties:
+                patient_id:
+                  type: integer
+                  example: 3
+                appointment_date:
+                  type: string
+                  format: date-time
+                  example: "2025-07-22T10:30:00"
+      responses:
+        '201':
+          description: Appointment created successfully
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden (only doctors can create)
+
+    get:
+      tags:
+        - Appointments
+      summary: Get all appointments for the authenticated user
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of appointments with doctor info
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    appointmentId:
+                      type: integer
+                      example: 12
+                    doctorName:
+                      type: string
+                      example: "Dr. Ahmed Tarek"
+                    specialty:
+                      type: string
+                      example: "Cardiology"
+                    date:
+                      type: string
+                      example: "2025-07-22"
+                    time:
+                      type: string
+                      example: "10:30 AM"
+        '401':
+          description: Unauthorized
+
+
+#authentication paths
+  /auth/signup:
+    post:
+      tags:
+        - Auth
+      summary: Signup as a new patient
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - firstName
+                - lastName
+                - email
+                - password
+                - age
+                - gender
+                - height
+                - weight
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                age:
+                  type: integer
+                gender:
+                  type: string
+                  enum: [male, female]
+                height:
+                  type: number
+                weight:
+                  type: number
+                doctorId:
+                  type: integer
+      responses:
+        '201':
+          description: Patient registered successfully
+        '400':
+          description: Validation error
+
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Login as a patient or doctor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Logged in successfully
+        '400':
+          description: Invalid credentials
+
+  /auth/logout:
+    post:
+      tags:
+        - Auth
+      summary: Logout the currently logged-in user
+      responses:
+        '200':
+          description: Logged out successfully
+        '401':
+          description: Unauthorized
+
+  /auth/forgot-password:
+    post:
+      tags:
+        - Auth
+      summary: Send a password reset link to email
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+              properties:
+                email:
+                  type: string
+                  format: email
+      responses:
+        '200':
+          description: Reset link sent
+        '400':
+          description: Email not found
+
+  /auth/reset-password:
+    post:
+      tags:
+        - Auth
+      summary: Reset password using token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - token
+                - newPassword
+              properties:
+                token:
+                  type: string
+                newPassword:
+                  type: string
+      responses:
+        '200':
+          description: Password reset successfully
+        '400':
+          description: Invalid or expired token
+
+  /auth/change-password:
+    post:
+      tags:
+        - Auth
+      summary: Change password for the authenticated user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - oldPassword
+                - newPassword
+              properties:
+                oldPassword:
+                  type: string
+                  example: old_password123
+                newPassword:
+                  type: string
+                  example: new_password456
+      responses:
+        '200':
+          description: Password changed successfully
+        '400':
+          description: Validation error or old password incorrect
+        '401':
+          description: Unauthorized
+
+
+
+#device paths
+  /devices/bind:
+    post:
+      tags:
+        - Devices
+      summary: Bind a device to the authenticated patient
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - deviceId
+              properties:
+                deviceId:
+                  type: string
+                  example: "device123"
+      responses:
+        '200':
+          description: Device successfully bound to patient
+        '400':
+          description: Validation error or device not found
+        '401':
+          description: Unauthorized
+
+#doctor paths
+  /doctors/{id}:
+    get:
+      summary: Get doctor profile
+      tags: [Doctors]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: Doctor ID
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Doctor profile fetched successfully
+        401:
+          description: Unauthorized
+        404:
+          description: Doctor not found
+
+  /doctors/{id}/patients:
+    get:
+      summary: Get all patients assigned to a doctor
+      tags: [Doctors]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: Doctor ID
+          schema:
+            type: integer
+      responses:
+        200:
+          description: List of patients fetched successfully
+        401:
+          description: Unauthorized
+        404:
+          description: Doctor or patients not found
+
+  /doctors/{doctorId}/patients/{patientId}:
+    get:
+      summary: Get profile of a specific patient under a doctor
+      tags: [Doctors]
+      parameters:
+        - in: path
+          name: doctorId
+          required: true
+          schema:
+            type: integer
+        - in: path
+          name: patientId
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Patient profile fetched successfully
+        401:
+          description: Unauthorized
+        404:
+          description: Patient not found
+
+  /doctors/predict:
+    post:
+      summary: Predict diagnosis based on patient vitals
+      tags: [Doctors]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                age:
+                  type: number
+                gender:
+                  type: string
+                snoring:
+                  type: number
+                oxygen_saturation:
+                  type: number
+                bmi:
+                  type: number
+                ahi:
+                  type: number
+      responses:
+        200:
+          description: Prediction result
+        400:
+          description: Invalid input
+        401:
+          description: Unauthorized
+
+  /doctors/treatment:
+    post:
+      summary: Generate treatment plan
+      tags: [Doctors]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                severity:
+                  type: number
+                gender:
+                  type: string
+                bmi:
+                  type: number
+                snoring:
+                  type: number
+                ahi:
+                  type: number
+      responses:
+        200:
+          description: Treatment plan generated
+        400:
+          description: Invalid input
+        401:
+          description: Unauthorized
+
+  /doctors/full_report:
+    post:
+      summary: Generate full report for a patient
+      tags: [Doctors]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                age:
+                  type: number
+                gender:
+                  type: string
+                snoring:
+                  type: number
+                oxygen_saturation:
+                  type: number
+                bmi:
+                  type: number
+                ahi:
+                  type: number
+      responses:
+        200:
+          description: Full report generated
+        400:
+          description: Invalid input
+        401:
+          description: Unauthorized
+
+# Notifications Routes
+  /notifications:
+    get:
+      tags:
+        - Notifications
+      summary: Get notifications for the logged-in user
+      responses:
+        200:
+          description: List of notifications
+        401:
+          description: Unauthorized
+
+    post:
+      tags:
+        - Notifications
+      summary: Create a system-triggered notification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - content
+                - receiverId
+                - type
+              properties:
+                title:
+                  type: string
+                content:
+                  type: string
+                receiverId:
+                  type: integer
+                type:
+                  type: string
+                  example: appointment
+      responses:
+        201:
+          description: Notification created successfully
+
+  /notifications/{id}/seen:
+    patch:
+      tags:
+        - Notifications
+      summary: Mark a notification as seen
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Notification ID
+      responses:
+        200:
+          description: Notification marked as seen
+        404:
+          description: Notification not found
+
+  /notifications/general:
+    post:
+      tags:
+        - Notifications
+      summary: Send a general system notification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - content
+              properties:
+                title:
+                  type: string
+                content:
+                  type: string
+      responses:
+        200:
+          description: General notification sent
+
+  /notifications/{id}:
+    get:
+      tags:
+        - Notifications
+      summary: Get a notification by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Notification ID
+      responses:
+        200:
+          description: Notification data
+        404:
+          description: Notification not found
+
+#patients Routes
+  /patients/{id}:
+    get:
+      tags:
+        - Patients
+      summary: Get patient profile
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: Patient ID
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Patient profile fetched successfully
+        401:
+          description: Unauthorized
+        404:
+          description: Patient not found
+
+    put:
+      tags:
+        - Patients
+      summary: Update patient profile
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: Patient ID
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                email:
+                  type: string
+                age:
+                  type: number
+                gender:
+                  type: string
+                height:
+                  type: number
+                weight:
+                  type: number
+      responses:
+        200:
+          description: Profile updated successfully
+        400:
+          description: Invalid input
+        401:
+          description: Unauthorized
+
+  /patients/predict:
+    post:
+      tags:
+        - Patients
+      summary: Predict diagnosis based on vitals
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                age:
+                  type: number
+                gender:
+                  type: string
+                snoring:
+                  type: number
+                oxygen_saturation:
+                  type: number
+                bmi:
+                  type: number
+                ahi:
+                  type: number
+      responses:
+        200:
+          description: Prediction result
+        400:
+          description: Invalid input
+        401:
+          description: Unauthorized
+
+  /patients/treatment:
+    post:
+      tags:
+        - Patients
+      summary: Generate treatment plan for patient
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                severity:
+                  type: number
+                gender:
+                  type: string
+                bmi:
+                  type: number
+                snoring:
+                  type: number
+                ahi:
+                  type: number
+      responses:
+        200:
+          description: Treatment plan generated
+        400:
+          description: Invalid input
+        401:
+          description: Unauthorized
+
+  /patients/report:
+    post:
+      tags:
+        - Patients
+      summary: Generate summary report for patient
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                age:
+                  type: number
+                gender:
+                  type: string
+                snoring:
+                  type: number
+                oxygen_saturation:
+                  type: number
+                bmi:
+                  type: number
+                ahi:
+                  type: number
+      responses:
+        200:
+          description: Report generated successfully
+        400:
+          description: Invalid input
+        401:
+          description: Unauthorized
+
+#vitals Routes
+  /vitals/average:
+    post:
+      tags:
+        - Vitals
+      summary: Receive realtime vitals from Firebase and calculate average
+      description: |
+        Receives real-time vitals from Firebase, calculates the average of those vitals, 
+        and stores the result for the patient.
+      responses:
+        '200':
+          description: Successfully calculated average vitals
+        '429':
+          description: Too many requests
+        '401':
+          description: Unauthorized
+
+  /vitals/last-averaged:
+    get:
+      tags:
+        - Vitals
+      summary: Get last averaged vitals for current user
+      description: |
+        Returns the most recent averaged vitals that were calculated 
+        from realtime data for the current patient or doctor.
+      responses:
+        '200':
+          description: Returns last averaged vitals
+        '404':
+          description: No averaged vitals found
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

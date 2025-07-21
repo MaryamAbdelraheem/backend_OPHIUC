@@ -2,6 +2,8 @@ const ApiError = require('../utils/errors/ApiError');
 const { Notification } = require('../models');
 const NotificationService = require('../services/NotificationService');
 const asyncHandler = require('express-async-handler')
+const notificationRepository = require('../repositories/notificationRepositry');
+
 /**
  * @method POST
  * @route /api/v1/notifications
@@ -27,18 +29,15 @@ exports.createNotification = asyncHandler(async (req, res) => {
  * @access Protected (token required)
  */
 exports.getMyNotifications = asyncHandler(async (req, res) => {
-  const userId  = req.user.id; // Extracted from auth middleware
-  
-  const notifications = await Notification.findAll({
-    where: { recipient_id: userId },
-    order: [['createdAt', 'DESC']]
-  });
+  const userId = req.user.id; // Extracted from auth middleware
+
+  const notifications = await notificationRepository.findAllByRecipientId(userId);
 
   res.status(200).json({
     status: 'success',
     data: {
-      notifications
-    }
+      notifications,
+    },
   });
 });
 
@@ -50,14 +49,9 @@ exports.getMyNotifications = asyncHandler(async (req, res) => {
  */
 exports.getNotificationById = asyncHandler(async (req, res, next) => {
   const notificationId = req.params.id;
-  const userId = req.user.id; // تأكد إن المستخدم هو اللي له الإشعار
+  const userId = req.user.id;
 
-  const notification = await Notification.findOne({
-    where: {
-      notification_id: notificationId,
-      recipient_id: userId  // عشان الأمان
-    }
-  });
+  const notification = await notificationRepository.findByIdForUser(notificationId, userId);
 
   if (!notification) {
     return next(new ApiError('Notification not found', 404));
@@ -66,8 +60,8 @@ exports.getNotificationById = asyncHandler(async (req, res, next) => {
   res.status(200).json({
     status: 'success',
     data: {
-      notification
-    }
+      notification,
+    },
   });
 });
 
@@ -82,18 +76,18 @@ exports.getNotificationById = asyncHandler(async (req, res, next) => {
  */
 exports.markAsSeen = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
-  const notification = await Notification.findByPk(id);
+
+  const notification = await notificationRepository.findById(id);
 
   if (!notification) {
     return next(new ApiError('Notification not found', 404));
   }
 
-  notification.seen = true;
-  await notification.save();
+  await notificationRepository.markAsSeen(notification);
 
   res.status(200).json({
     status: 'success',
-    message: 'Notification marked as seen'
+    message: 'Notification marked as seen',
   });
 });
 
@@ -111,13 +105,13 @@ exports.sendGeneral = asyncHandler(async (req, res) => {
     recipient_id,
     context_type: 'NONE',
     context_id: null,
-    target_app
+    target_app,
   });
 
   res.status(201).json({
     status: 'success',
     data: {
-      notification
-    }
+      notification,
+    },
   });
 });
