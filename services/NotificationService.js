@@ -36,9 +36,9 @@ const send = async ({
     context_id,
     target_app,
     delivery_method,
-    patientId,            // ✅ جديد
-    doctorId,              // ✅ جديد
-    appointmentId     // ✅ جديد
+    patientId,            
+    doctorId,           
+    appointmentId    
   });
 
   // Optional: handle push notification delivery (if needed)

@@ -1,15 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const { signupPatientValidator, loginValidator } = require('../validators/authValidator');
-const { signupPatient, login, logout, forgotPassword, resetPassword, changePassword } = require('../controllers/authController');
+const { signupValidator, loginValidator } = require('../validators/authValidator');
+const { signup, login, logout, forgotPassword, resetPassword, changePassword } = require('../controllers/authController');
 const { authenticateToken, authorizeRoles } = require('../middleware/authMiddleware');
 const { forgotPasswordLimiter } = require('../middleware/rateLimiter');
 
 router
     .route('/signup')
     .post(
-        signupPatientValidator,
-        signupPatient
+        signupValidator,
+        signup
     );
 
 
