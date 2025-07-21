@@ -148,7 +148,7 @@ MIT License © 2025
 📬 Contact
 	•	Developer: Maryam Abdelraheem
 	•	Email: your.email@example.com
-	•	LinkedIn: linkedin.com/in/your-profile
+	•	LinkedIn: 
 
 ⸻
 
@@ -156,8 +156,3 @@ MIT License © 2025
 
 ---
 
-Let me know if you'd like:
-- Shields.io badges (e.g. version, license, Node.js)
-- Light/dark mode preview
-- Automatic table of contents  
-I'll be happy to assist!
