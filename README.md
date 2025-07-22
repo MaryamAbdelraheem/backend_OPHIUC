@@ -1,4 +1,4 @@
-أكيد! Here’s the README.md fully rewritten in professional English Markdown format, ready for copy-paste into your project:
+
 
 ⸻
 
